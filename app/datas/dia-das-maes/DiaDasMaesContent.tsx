@@ -12,18 +12,28 @@ interface MensagemDia {
   categoria: Categoria;
 }
 
-// URL única por card elaborado — sem rotação, sem repetição
+// URL única por card elaborado — verificadas via Unsplash, sem repetição
 const FOTO_POR_ID: Record<number, string> = {
-  3:  "https://images.unsplash.com/photo-1489924329015-21e3e94e29db?w=600&q=80",
-  5:  "https://images.unsplash.com/photo-1543342384-1f1350e27861?w=600&q=80",
-  7:  "https://images.unsplash.com/photo-1516627145497-ae6968895b40?w=600&q=80",
-  9:  "https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=600&q=80",
-  11: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&q=80",
-  13: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
-  15: "https://images.unsplash.com/photo-1511895426328-dc8714191011?w=600&q=80",
-  16: "https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=600&q=80",
-  17: "https://images.unsplash.com/photo-1484665754804-74b091211472?w=600&q=80",
-  19: "https://images.unsplash.com/photo-1491013516836-7db643ee125a?w=600&q=80",
+  // Card 3 "Minha Primeira Casa" — mãe e filha no sofá da sala de estar
+  3:  "https://images.unsplash.com/photo-66qSMfS4xVk?w=600&q=80",
+  // Card 5 "Aprendi Com Você" — mãe e filha estudando juntas à mesa
+  5:  "https://images.unsplash.com/photo-_Am5E9vcsu8?w=600&q=80",
+  // Card 7 "Saudade Que Aperta" — mãe e filha abraçadas deitadas, ternura
+  7:  "https://images.unsplash.com/photo-5RoPtdGcUmI?w=600&q=80",
+  // Card 9 "Acreditou Quando Eu Duvidei" — mãe abraçando filha com carinho em casa
+  9:  "https://images.unsplash.com/photo-TJbxObhUXYo?w=600&q=80",
+  // Card 11 "Lugar Que Tem Seu Nome" — mãe e filha olhando uma para a outra, felizes
+  11: "https://images.unsplash.com/photo-QoWvy8Ufqb0?w=600&q=80",
+  // Card 13 "Sacrifícios em Silêncio" — mãe jovem levantando a filha, amor puro
+  13: "https://images.unsplash.com/photo-mtZ7Tts2Wik?w=600&q=80",
+  // Card 15 "O Maior Sonho" — foto antiga P&B de mulher e criança de mãos dadas
+  15: "https://images.unsplash.com/photo-qeBjO0SKG3k?w=600&q=80",
+  // Card 16 "Amor de Cada Dia" — mãe e filho desenhando juntos no chão em casa
+  16: "https://images.unsplash.com/photo-bcLmzKuY_N4?w=600&q=80",
+  // Card 17 "A Voz Que Me Ergueu" — mãe confortando filho após se machucar
+  17: "https://images.unsplash.com/photo-ATTuOJJ1tLg?w=600&q=80",
+  // Card 19 "Ainda Quero Seu Colo" — mãe idosa abraçando filha adulta em casa
+  19: "https://images.unsplash.com/photo-Y3QTXp3BA50?w=600&q=80",
 };
 
 const MENSAGENS: MensagemDia[] = [
