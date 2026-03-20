@@ -384,11 +384,10 @@ export default function DiaDasMaesContent({ fotos }: DiaDasMaesContentProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {MENSAGENS.map((mensagem) => {
           const foto = fotos[mensagem.id] ?? "";
-          // Card elaborado sem foto disponível é exibido como curta (gradiente)
-          if (mensagem.categoria === "elaborada" && foto) {
-            return <CardElaborada key={mensagem.id} mensagem={mensagem} foto={foto} />;
-          }
-          return <CardCurta key={mensagem.id} mensagem={mensagem} />;
+          // Todos os cards recebem imagem; sem foto cai no gradiente rosa (CardCurta)
+          return foto
+            ? <CardElaborada key={mensagem.id} mensagem={mensagem} foto={foto} />
+            : <CardCurta     key={mensagem.id} mensagem={mensagem} />;
         })}
       </div>
     </section>

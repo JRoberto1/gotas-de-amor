@@ -36,20 +36,30 @@ export default async function DiaDasMaesPage() {
     CATEGORIAS_RELACIONADAS.includes(c.valor)
   );
 
-  // Busca imagens via Pexels — queries temáticas por card, páginas variadas para evitar repetição
+  // Busca imagens via Pexels — todos os 20 cards com queries únicas por título/tema
   const [heroUrl, fotos] = await Promise.all([
     getImage("mother daughter love"),
     getImages([
-      { key: "3",  query: "mother child home warm",         page: 1 },
-      { key: "5",  query: "mother teaching child",          page: 2 },
-      { key: "7",  query: "mother hug nostalgic",           page: 1 },
-      { key: "9",  query: "mother encouragement child",     page: 1 },
-      { key: "11", query: "mother family warm home",        page: 3 },
-      { key: "13", query: "mother sacrifice love",          page: 1 },
-      { key: "15", query: "vintage mother child photo",     page: 1 },
-      { key: "16", query: "mother family everyday love",    page: 2 },
-      { key: "17", query: "mother comfort support",         page: 1 },
-      { key: "19", query: "mother adult child hug",         page: 1 },
+      { key: "1",  query: "mother love unconditional warm",        page: 1 },
+      { key: "2",  query: "mother embrace scent memory",           page: 1 },
+      { key: "3",  query: "mother child home safe cozy",           page: 1 },
+      { key: "4",  query: "mother daughter tender silence",        page: 2 },
+      { key: "5",  query: "mother teaching child strength",        page: 1 },
+      { key: "6",  query: "mother knows child heart bond",         page: 1 },
+      { key: "7",  query: "mother nostalgic longing portrait",     page: 1 },
+      { key: "8",  query: "mother child freedom nature",           page: 1 },
+      { key: "9",  query: "mother encouragement belief support",   page: 1 },
+      { key: "10", query: "mother love distance connection",       page: 1 },
+      { key: "11", query: "mother family acceptance safe place",   page: 1 },
+      { key: "12", query: "mother crying joy celebration",         page: 1 },
+      { key: "13", query: "mother sacrifice silent dedication",    page: 1 },
+      { key: "14", query: "mother lap comfort cozy home",          page: 1 },
+      { key: "15", query: "vintage mother child hands old photo",  page: 1 },
+      { key: "16", query: "mother family everyday morning",        page: 1 },
+      { key: "17", query: "mother comfort voice strength hope",    page: 1 },
+      { key: "18", query: "mother presence always together",       page: 1 },
+      { key: "19", query: "adult hugging mother senior woman",     page: 1 },
+      { key: "20", query: "mother love eternal timeless",          page: 1 },
     ]),
   ]);
 
