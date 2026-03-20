@@ -37,12 +37,12 @@ function LogoGota() {
   );
 }
 
-// Links de navegação principal
+// Links de navegação apontando para as rotas reais
 const navLinks = [
   { label: "Início", href: "/" },
-  { label: "Categorias", href: "#categorias" },
-  { label: "Datas", href: "#datas" },
-  { label: "Favoritos", href: "#favoritos" },
+  { label: "Categorias", href: "/categoria" },
+  { label: "Datas", href: "/datas" },
+  { label: "Favoritos", href: "/favoritos" },
 ];
 
 export default function Header() {
@@ -60,14 +60,14 @@ export default function Header() {
           {/* Navegação desktop */}
           <nav className="hidden md:flex items-center gap-8" aria-label="Navegação principal">
             {navLinks.map((link) => (
-              <a
+              <Link
                 key={link.href}
                 href={link.href}
                 className="text-sm font-medium text-[#1A1A2E] hover:text-[#E8537A] transition-colors duration-200"
                 style={{ fontFamily: "var(--font-lato), Arial, sans-serif" }}
               >
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
 
@@ -90,7 +90,7 @@ export default function Header() {
           aria-label="Navegação mobile"
         >
           {navLinks.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
               className="block py-3 text-base font-medium text-[#1A1A2E] hover:text-[#E8537A] border-b border-gray-50 transition-colors"
@@ -98,7 +98,7 @@ export default function Header() {
               onClick={() => setMenuAberto(false)}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </nav>
       )}
