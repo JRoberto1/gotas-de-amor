@@ -29,16 +29,23 @@ export default async function HomePage() {
         <CarouselDestaque />
 
         {/* Título da seção de mensagens */}
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-2" id="categorias">
+        <div className="w-full px-4 sm:px-6 pt-8 pb-8 text-center" id="categorias">
           <h2
-            className="text-2xl font-semibold text-[#1A1A2E]"
-            style={{ fontFamily: "var(--font-playfair-display), Georgia, serif" }}
+            className="font-semibold text-[#1A1A2E]"
+            style={{
+              fontFamily: "var(--font-playfair-display), Georgia, serif",
+              fontSize: 28,
+            }}
           >
             Mensagens
           </h2>
           <p
-            className="text-sm text-gray-500 mt-1"
-            style={{ fontFamily: "var(--font-lato), Arial, sans-serif" }}
+            className="mt-2"
+            style={{
+              fontFamily: "var(--font-lato), Arial, sans-serif",
+              fontSize: 14,
+              color: "#999",
+            }}
           >
             Escolha uma categoria ou explore todas as mensagens
           </p>
