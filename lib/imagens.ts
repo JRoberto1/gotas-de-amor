@@ -11,7 +11,7 @@ export const IMAGENS_CATEGORIA: Record<string, string> = {
   "fe-espiritualidade":
     "https://images.unsplash.com/photo-1447069387593-a5de0862481e?w=600&q=80",
   familia:
-    "https://images.unsplash.com/photo-1609220136736-443140cfeaa8?w=600&q=80",
+    "https://images.unsplash.com/photo-1476234251651-f353703a034d?w=600&q=80",
   motivacao:
     "https://images.unsplash.com/photo-1464820453369-31d2c0b651af?w=600&q=80",
   amizade:
