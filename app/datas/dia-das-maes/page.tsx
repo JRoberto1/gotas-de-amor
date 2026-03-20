@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
 import DiaDasMaesContent from "./DiaDasMaesContent";
 import { CATEGORIAS } from "@/lib/categorias";
+import { getImage, getImages } from "@/lib/pexels";
 
 export const metadata: Metadata = {
   title: "Mensagens para o Dia das Mães 2026 — Gotas de Amor",
@@ -30,10 +31,37 @@ export const metadata: Metadata = {
 
 const CATEGORIAS_RELACIONADAS = ["amor", "familia", "fe-espiritualidade"];
 
-export default function DiaDasMaesPage() {
+export default async function DiaDasMaesPage() {
   const categoriasLink = CATEGORIAS.filter((c) =>
     CATEGORIAS_RELACIONADAS.includes(c.valor)
   );
+
+  // Busca imagens via Pexels — queries temáticas por card, páginas variadas para evitar repetição
+  const [heroUrl, fotos] = await Promise.all([
+    getImage("mother daughter love"),
+    getImages([
+      { key: "3",  query: "mother child home warm",         page: 1 },
+      { key: "5",  query: "mother teaching child",          page: 2 },
+      { key: "7",  query: "mother hug nostalgic",           page: 1 },
+      { key: "9",  query: "mother encouragement child",     page: 1 },
+      { key: "11", query: "mother family warm home",        page: 3 },
+      { key: "13", query: "mother sacrifice love",          page: 1 },
+      { key: "15", query: "vintage mother child photo",     page: 1 },
+      { key: "16", query: "mother family everyday love",    page: 2 },
+      { key: "17", query: "mother comfort support",         page: 1 },
+      { key: "19", query: "mother adult child hug",         page: 1 },
+    ]),
+  ]);
+
+  // Converte chaves string → número
+  const fotosPorId: Record<number, string> = Object.fromEntries(
+    Object.entries(fotos).map(([k, v]) => [Number(k), v])
+  );
+
+  // Fallback do hero se Pexels não estiver configurado
+  const heroFinal =
+    heroUrl ||
+    "https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=900&q=80";
 
   return (
     <>
@@ -44,7 +72,7 @@ export default function DiaDasMaesPage() {
         <div className="relative w-full overflow-hidden" style={{ height: 380 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-VzqEWn1uxaM?w=900&q=80"
+            src={heroFinal}
             alt="Mãe e filho em momento de amor e ternura"
             className="w-full h-full object-cover"
             loading="eager"
@@ -82,7 +110,7 @@ export default function DiaDasMaesPage() {
         </div>
 
         {/* Grid de mensagens */}
-        <DiaDasMaesContent />
+        <DiaDasMaesContent fotos={fotosPorId} />
 
         {/* Seção de categorias relacionadas */}
         <section className="max-w-6xl mx-auto px-4 sm:px-6 pb-12 w-full">

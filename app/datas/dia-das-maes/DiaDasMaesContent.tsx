@@ -12,29 +12,6 @@ interface MensagemDia {
   categoria: Categoria;
 }
 
-// URL única por card elaborado — verificadas via Unsplash, sem repetição
-const FOTO_POR_ID: Record<number, string> = {
-  // Card 3 "Minha Primeira Casa" — mãe e filha no sofá da sala de estar
-  3:  "https://images.unsplash.com/photo-66qSMfS4xVk?w=600&q=80",
-  // Card 5 "Aprendi Com Você" — mãe e filha estudando juntas à mesa
-  5:  "https://images.unsplash.com/photo-_Am5E9vcsu8?w=600&q=80",
-  // Card 7 "Saudade Que Aperta" — mãe e filha abraçadas deitadas, ternura
-  7:  "https://images.unsplash.com/photo-5RoPtdGcUmI?w=600&q=80",
-  // Card 9 "Acreditou Quando Eu Duvidei" — mãe abraçando filha com carinho em casa
-  9:  "https://images.unsplash.com/photo-TJbxObhUXYo?w=600&q=80",
-  // Card 11 "Lugar Que Tem Seu Nome" — mãe e filha olhando uma para a outra, felizes
-  11: "https://images.unsplash.com/photo-QoWvy8Ufqb0?w=600&q=80",
-  // Card 13 "Sacrifícios em Silêncio" — mãe jovem levantando a filha, amor puro
-  13: "https://images.unsplash.com/photo-mtZ7Tts2Wik?w=600&q=80",
-  // Card 15 "O Maior Sonho" — foto antiga P&B de mulher e criança de mãos dadas
-  15: "https://images.unsplash.com/photo-qeBjO0SKG3k?w=600&q=80",
-  // Card 16 "Amor de Cada Dia" — mãe e filho desenhando juntos no chão em casa
-  16: "https://images.unsplash.com/photo-bcLmzKuY_N4?w=600&q=80",
-  // Card 17 "A Voz Que Me Ergueu" — mãe confortando filho após se machucar
-  17: "https://images.unsplash.com/photo-ATTuOJJ1tLg?w=600&q=80",
-  // Card 19 "Ainda Quero Seu Colo" — mãe idosa abraçando filha adulta em casa
-  19: "https://images.unsplash.com/photo-Y3QTXp3BA50?w=600&q=80",
-};
 
 const MENSAGENS: MensagemDia[] = [
   {
@@ -274,10 +251,15 @@ function CardCurta({ mensagem }: { mensagem: MensagemDia }) {
   );
 }
 
-function CardElaborada({ mensagem }: { mensagem: MensagemDia }) {
+function CardElaborada({
+  mensagem,
+  foto,
+}: {
+  mensagem: MensagemDia;
+  foto: string;
+}) {
   const [copiado, setCopiado] = useState(false);
   const [favoritado, setFavoritado] = useState(false);
-  const foto = FOTO_POR_ID[mensagem.id];
 
   const copiar = async () => {
     try {
@@ -376,7 +358,12 @@ function CardElaborada({ mensagem }: { mensagem: MensagemDia }) {
   );
 }
 
-export default function DiaDasMaesContent() {
+interface DiaDasMaesContentProps {
+  /** URLs por ID de mensagem, vindas do servidor via Pexels API */
+  fotos: Record<number, string>;
+}
+
+export default function DiaDasMaesContent({ fotos }: DiaDasMaesContentProps) {
   return (
     <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10 w-full">
       <div className="text-center mb-8">
@@ -395,13 +382,14 @@ export default function DiaDasMaesContent() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {MENSAGENS.map((mensagem) =>
-          mensagem.categoria === "elaborada" ? (
-            <CardElaborada key={mensagem.id} mensagem={mensagem} />
-          ) : (
-            <CardCurta key={mensagem.id} mensagem={mensagem} />
-          )
-        )}
+        {MENSAGENS.map((mensagem) => {
+          const foto = fotos[mensagem.id] ?? "";
+          // Card elaborado sem foto disponível é exibido como curta (gradiente)
+          if (mensagem.categoria === "elaborada" && foto) {
+            return <CardElaborada key={mensagem.id} mensagem={mensagem} foto={foto} />;
+          }
+          return <CardCurta key={mensagem.id} mensagem={mensagem} />;
+        })}
       </div>
     </section>
   );
