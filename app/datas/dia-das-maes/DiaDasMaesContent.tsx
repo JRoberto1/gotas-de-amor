@@ -12,12 +12,19 @@ interface MensagemDia {
   categoria: Categoria;
 }
 
-const FOTOS_ELABORADAS = [
-  "https://images.unsplash.com/photo-1476234251651-f353703a034d?w=600&q=80",
-  "https://images.unsplash.com/photo-1511895426328-dc8714191011?w=600&q=80",
-  "https://images.unsplash.com/photo-1491013516836-7db643ee125a?w=600&q=80",
-  "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&q=80",
-];
+// URL única por card elaborado — sem rotação, sem repetição
+const FOTO_POR_ID: Record<number, string> = {
+  3:  "https://images.unsplash.com/photo-1489924329015-21e3e94e29db?w=600&q=80",
+  5:  "https://images.unsplash.com/photo-1543342384-1f1350e27861?w=600&q=80",
+  7:  "https://images.unsplash.com/photo-1516627145497-ae6968895b40?w=600&q=80",
+  9:  "https://images.unsplash.com/photo-1491438590914-bc09fcaaf77a?w=600&q=80",
+  11: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&q=80",
+  13: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
+  15: "https://images.unsplash.com/photo-1511895426328-dc8714191011?w=600&q=80",
+  16: "https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=600&q=80",
+  17: "https://images.unsplash.com/photo-1484665754804-74b091211472?w=600&q=80",
+  19: "https://images.unsplash.com/photo-1491013516836-7db643ee125a?w=600&q=80",
+};
 
 const MENSAGENS: MensagemDia[] = [
   {
@@ -128,7 +135,7 @@ const MENSAGENS: MensagemDia[] = [
     titulo: "Amor de Cada Dia",
     texto:
       "Mãe, você me ensinou que amor de verdade aparece todo dia, não só nas datas especiais.",
-    categoria: "curta",
+    categoria: "elaborada",
   },
   {
     id: 17,
@@ -160,18 +167,6 @@ const MENSAGENS: MensagemDia[] = [
   },
 ];
 
-// Atribui fotos apenas para os cards elaborados, em rodízio
-const fotosPorId: Record<number, string> = (() => {
-  let idx = 0;
-  const map: Record<number, string> = {};
-  MENSAGENS.forEach((m) => {
-    if (m.categoria === "elaborada") {
-      map[m.id] = FOTOS_ELABORADAS[idx % FOTOS_ELABORADAS.length];
-      idx++;
-    }
-  });
-  return map;
-})();
 
 function CardCurta({ mensagem }: { mensagem: MensagemDia }) {
   const [copiado, setCopiado] = useState(false);
@@ -272,7 +267,7 @@ function CardCurta({ mensagem }: { mensagem: MensagemDia }) {
 function CardElaborada({ mensagem }: { mensagem: MensagemDia }) {
   const [copiado, setCopiado] = useState(false);
   const [favoritado, setFavoritado] = useState(false);
-  const foto = fotosPorId[mensagem.id];
+  const foto = FOTO_POR_ID[mensagem.id];
 
   const copiar = async () => {
     try {

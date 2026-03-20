@@ -44,7 +44,7 @@ export default function DiaDasMaesPage() {
         <div className="relative w-full overflow-hidden" style={{ height: 380 }}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=900&q=80"
+            src="https://images.unsplash.com/photo-1574781330855-d0db8cc6a79c?w=900&q=80"
             alt="Mãe e filho em momento de amor e ternura"
             className="w-full h-full object-cover"
             loading="eager"
