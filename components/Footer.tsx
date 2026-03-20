@@ -1,7 +1,8 @@
 // Componente de rodapé estático — server component
+import Link from "next/link";
 import { Heart } from "lucide-react";
 
-// Logo reutilizável com gota SVG em versão clara para o fundo escuro
+// Logo com gota SVG em versão clara para o fundo escuro
 function LogoGotaBranca() {
   return (
     <div className="flex items-center gap-2">
@@ -35,8 +36,21 @@ function LogoGotaBranca() {
 }
 
 const linksFooter = [
-  { grupo: "Conteúdo", links: [{ label: "Categorias", href: "#categorias" }, { label: "Datas Especiais", href: "#datas" }] },
-  { grupo: "Institucional", links: [{ label: "Sobre", href: "#sobre" }, { label: "Contato", href: "#contato" }] },
+  {
+    grupo: "Conteúdo",
+    links: [
+      { label: "Categorias", href: "/#categorias" },
+      { label: "Datas Especiais", href: "/datas/dia-das-maes" },
+    ],
+  },
+  {
+    grupo: "Institucional",
+    links: [
+      { label: "Sobre", href: "/sobre" },
+      { label: "Contato", href: "/contato" },
+      { label: "Política de Privacidade", href: "/politica-de-privacidade" },
+    ],
+  },
 ];
 
 export default function Footer() {
@@ -70,13 +84,13 @@ export default function Footer() {
               <ul className="flex flex-col gap-2">
                 {links.map(({ label, href }) => (
                   <li key={label}>
-                    <a
+                    <Link
                       href={href}
                       className="text-sm text-gray-300 hover:text-[#E8537A] transition-colors"
                       style={{ fontFamily: "var(--font-lato), Arial, sans-serif" }}
                     >
                       {label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -86,10 +100,16 @@ export default function Footer() {
 
         {/* Rodapé inferior */}
         <div className="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p className="text-xs text-gray-500" style={{ fontFamily: "var(--font-lato), Arial, sans-serif" }}>
+          <p
+            className="text-xs text-gray-500"
+            style={{ fontFamily: "var(--font-lato), Arial, sans-serif" }}
+          >
             © {new Date().getFullYear()} Gotas de Amor. Todos os direitos reservados.
           </p>
-          <p className="flex items-center gap-1 text-xs text-gray-500" style={{ fontFamily: "var(--font-lato), Arial, sans-serif" }}>
+          <p
+            className="flex items-center gap-1 text-xs text-gray-500"
+            style={{ fontFamily: "var(--font-lato), Arial, sans-serif" }}
+          >
             Feito com <Heart size={11} className="text-[#E8537A]" fill="#E8537A" /> para tocar corações
           </p>
         </div>

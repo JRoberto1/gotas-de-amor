@@ -21,7 +21,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "Cuidar da mente é um ato de amor. Fale sobre o que sente — você não está sozinho nessa jornada.",
       imagem:
-        "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1200&q=80",
+        "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=80",
       corBadge: "#8D99AE",
     },
   ],
@@ -32,7 +32,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "Prevenir é amar. Conscientizar é cuidar. Neste mês, a luta contra o lúpus e a fibromialgia ganha cor e voz.",
       imagem:
-        "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=1200&q=80",
+        "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=600&q=80",
       corBadge: "#9B72CF",
     },
   ],
@@ -43,7 +43,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "Toda mulher carrega dentro de si uma força que move montanhas. Hoje e sempre, celebre quem você é.",
       imagem:
-        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&q=80",
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80",
       corBadge: "#E8537A",
     },
   ],
@@ -54,7 +54,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "A Páscoa nos lembra que após cada inverno vem a primavera. Que a renovação chegue ao seu coração.",
       imagem:
-        "https://images.unsplash.com/photo-1457301353672-324d6d14f471?w=1200&q=80",
+        "https://images.unsplash.com/photo-1457301353672-324d6d14f471?w=600&q=80",
       corBadge: "#52B788",
     },
   ],
@@ -65,7 +65,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "Mãe é quem nos ensina que o amor não precisa de palavras — ele se faz presente em cada gesto, em cada abraço.",
       imagem:
-        "https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=1200&q=80",
+        "https://images.unsplash.com/photo-1516627145497-ae6968895b74?w=600&q=80",
       corBadge: "#E8537A",
     },
     {
@@ -74,7 +74,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "No trânsito, um segundo de atenção pode salvar uma vida. Dirija com amor — alguém está esperando você chegar.",
       imagem:
-        "https://images.unsplash.com/photo-1494059980473-813e73ee784b?w=1200&q=80",
+        "https://images.unsplash.com/photo-1494059980473-813e73ee784b?w=600&q=80",
       corBadge: "#FFD166",
     },
   ],
@@ -85,7 +85,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "Amar é escolher o outro todos os dias — nos momentos de alegria e nos de tempestade. Feliz Dia dos Namorados.",
       imagem:
-        "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=1200&q=80",
+        "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&q=80",
       corBadge: "#E8537A",
     },
   ],
@@ -96,7 +96,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "Pai é presença, é exemplo, é o porto seguro que nos ensina a enfrentar o mundo com coragem e amor.",
       imagem:
-        "https://images.unsplash.com/photo-1511895426328-dc8714191011?w=1200&q=80",
+        "https://images.unsplash.com/photo-1511895426328-dc8714191011?w=600&q=80",
       corBadge: "#118AB2",
     },
   ],
@@ -107,7 +107,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "O aleitamento materno é o primeiro ato de amor. Cada gota de leite é uma gota de vida, de proteção, de vínculo eterno.",
       imagem:
-        "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=1200&q=80",
+        "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=600&q=80",
       corBadge: "#F9C74F",
     },
   ],
@@ -118,7 +118,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "A vida vale a pena ser vivida. Se você está passando por um momento difícil, peça ajuda — não existe fraqueza nisso.",
       imagem:
-        "https://images.unsplash.com/photo-1474540412665-1cdae210ae6b?w=1200&q=80",
+        "https://images.unsplash.com/photo-1474540412665-1cdae210ae6b?w=600&q=80",
       corBadge: "#FFD166",
     },
   ],
@@ -129,7 +129,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "Cuidar de si é um ato de amor. A prevenção salva vidas — faça seus exames e incentive quem você ama a fazer também.",
       imagem:
-        "https://images.unsplash.com/photo-1508184964240-ee96bb9677a7?w=1200&q=80",
+        "https://images.unsplash.com/photo-1508184964240-ee96bb9677a7?w=600&q=80",
       corBadge: "#E8537A",
     },
   ],
@@ -140,7 +140,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "Homem que cuida da saúde é homem que ama a família. Prevenção do câncer de próstata começa com uma conversa.",
       imagem:
-        "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=1200&q=80",
+        "https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?w=600&q=80",
       corBadge: "#118AB2",
     },
   ],
@@ -151,7 +151,7 @@ const SLIDES_POR_MES: Record<number, Slide[]> = {
       frase:
         "Que o Natal renove a esperança no seu coração. O maior presente é estar ao lado de quem amamos.",
       imagem:
-        "https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=1200&q=80",
+        "https://images.unsplash.com/photo-1512389142860-9c449e58a543?w=600&q=80",
       corBadge: "#52B788",
     },
   ],

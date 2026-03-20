@@ -5,6 +5,7 @@ import type { Mensagem } from "@/components/MessageCard";
 import Header from "@/components/Header";
 import CarouselDestaque from "@/components/CarouselDestaque";
 import MensagensSection from "@/components/MensagensSection";
+import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 
 export default async function HomePage() {
@@ -15,8 +16,7 @@ export default async function HomePage() {
     const resultado = await sanityFetch({ query: todasMensagensQuery });
     mensagens = (resultado.data as Mensagem[]) ?? [];
   } catch {
-    // Se o Sanity não estiver configurado ou retornar erro,
-    // o componente MensagensGrid usa mensagens de fallback automaticamente
+    // Se o Sanity não estiver configurado, MensagensSection usa fallback automaticamente
     mensagens = [];
   }
 
@@ -29,12 +29,10 @@ export default async function HomePage() {
         <CarouselDestaque />
 
         {/* Título da seção de mensagens */}
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-2">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-2" id="categorias">
           <h2
             className="text-2xl font-semibold text-[#1A1A2E]"
-            style={{
-              fontFamily: "var(--font-playfair-display), Georgia, serif",
-            }}
+            style={{ fontFamily: "var(--font-playfair-display), Georgia, serif" }}
           >
             Mensagens
           </h2>
@@ -48,6 +46,9 @@ export default async function HomePage() {
 
         {/* Filtro de categorias + grid de mensagens (client-side) */}
         <MensagensSection mensagens={mensagens} />
+
+        {/* Seção de newsletter */}
+        <Newsletter />
       </main>
 
       <Footer />
