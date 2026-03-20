@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { CATEGORIAS, type CategoriaConfig } from "@/lib/categorias";
 
 // Reexporta para manter compatibilidade com imports existentes
@@ -11,37 +12,58 @@ interface CategoryFilterProps {
   onChange: (categoria: string | null) => void;
 }
 
+const SCROLL_STEP = 200;
+const FADE_COLOR = "#FAFAFA";
+
 export default function CategoryFilter({
   categoriaAtiva,
   onChange,
 }: CategoryFilterProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [showFade, setShowFade] = useState(true);
+  const [showLeft, setShowLeft] = useState(false);
+  const [showRight, setShowRight] = useState(true);
 
   // Drag-to-scroll no desktop
   const isDragging = useRef(false);
   const startX = useRef(0);
-  const scrollLeft = useRef(0);
+  const dragScrollLeft = useRef(0);
+  // Evita disparar onClick ao soltar após arrastar
+  const didDrag = useRef(false);
 
-  // Atualiza o fade ao rolar
+  const updateArrows = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setShowLeft(el.scrollLeft > 4);
+    setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    const check = () => {
-      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8;
-      setShowFade(!atEnd);
+    updateArrows();
+    el.addEventListener("scroll", updateArrows, { passive: true });
+    // Reavalia se a janela for redimensionada
+    window.addEventListener("resize", updateArrows);
+    return () => {
+      el.removeEventListener("scroll", updateArrows);
+      window.removeEventListener("resize", updateArrows);
     };
-    check();
-    el.addEventListener("scroll", check, { passive: true });
-    return () => el.removeEventListener("scroll", check);
-  }, []);
+  }, [updateArrows]);
+
+  const scrollBy = (dir: "left" | "right") => {
+    scrollRef.current?.scrollBy({
+      left: dir === "right" ? SCROLL_STEP : -SCROLL_STEP,
+      behavior: "smooth",
+    });
+  };
 
   const onMouseDown = (e: React.MouseEvent) => {
     const el = scrollRef.current;
     if (!el) return;
     isDragging.current = true;
+    didDrag.current = false;
     startX.current = e.pageX - el.offsetLeft;
-    scrollLeft.current = el.scrollLeft;
+    dragScrollLeft.current = el.scrollLeft;
     el.style.cursor = "grabbing";
     el.style.userSelect = "none";
   };
@@ -50,8 +72,9 @@ export default function CategoryFilter({
     if (!isDragging.current) return;
     const el = scrollRef.current;
     if (!el) return;
-    const x = e.pageX - el.offsetLeft;
-    el.scrollLeft = scrollLeft.current - (x - startX.current);
+    const delta = e.pageX - el.offsetLeft - startX.current;
+    if (Math.abs(delta) > 4) didDrag.current = true;
+    el.scrollLeft = dragScrollLeft.current - delta;
   };
 
   const onMouseUp = () => {
@@ -65,17 +88,45 @@ export default function CategoryFilter({
 
   return (
     <section id="categorias" className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-4">
-      {/* Wrapper relativo para o fade */}
-      <div className="relative">
-        {/* Scrollable pills */}
+      <div className="relative flex items-center">
+
+        {/* ── Seta esquerda ── */}
+        <button
+          onClick={() => scrollBy("left")}
+          aria-label="Rolar categorias para a esquerda"
+          className="absolute left-0 z-20 flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm transition-all duration-200 hover:shadow-md"
+          style={{
+            opacity: showLeft ? 1 : 0,
+            pointerEvents: showLeft ? "auto" : "none",
+            transform: showLeft ? "scale(1)" : "scale(0.8)",
+          }}
+        >
+          <ChevronLeft size={16} strokeWidth={2.5} style={{ color: "#1A1A2E" }} />
+        </button>
+
+        {/* Fade esquerdo */}
+        <div
+          className="absolute left-0 top-0 bottom-0 z-10 pointer-events-none"
+          style={{
+            width: 48,
+            background: `linear-gradient(to right, ${FADE_COLOR} 30%, transparent 100%)`,
+            opacity: showLeft ? 1 : 0,
+            transition: "opacity 0.2s",
+          }}
+        />
+
+        {/* ── Scrollable pills ── */}
         <div
           ref={scrollRef}
           data-scroll-pills
-          className="flex items-center gap-2 overflow-x-auto pb-1"
+          className="flex items-center gap-2 overflow-x-auto pb-1 w-full"
           style={{
             scrollbarWidth: "none",
             cursor: "grab",
             WebkitOverflowScrolling: "touch",
+            paddingLeft: showLeft ? 36 : 0,
+            paddingRight: showRight ? 36 : 0,
+            transition: "padding 0.2s",
           }}
           onMouseDown={onMouseDown}
           onMouseMove={onMouseMove}
@@ -84,7 +135,7 @@ export default function CategoryFilter({
         >
           {/* Pill "Todas" */}
           <button
-            onClick={() => onChange(null)}
+            onClick={() => { if (!didDrag.current) onChange(null); }}
             className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-200 whitespace-nowrap"
             style={{
               backgroundColor: categoriaAtiva === null ? "#1A1A2E" : "#fff",
@@ -102,7 +153,7 @@ export default function CategoryFilter({
             return (
               <button
                 key={valor}
-                onClick={() => onChange(ativa ? null : valor)}
+                onClick={() => { if (!didDrag.current) onChange(ativa ? null : valor); }}
                 className="flex-shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-200 whitespace-nowrap"
                 style={{
                   backgroundColor: ativa ? corFundo : `${corFundo}33`,
@@ -116,41 +167,32 @@ export default function CategoryFilter({
               </button>
             );
           })}
-
-          {/* Espaço extra no final para o fade não cobrir a última pill */}
-          <span className="flex-shrink-0 w-8" aria-hidden="true" />
         </div>
 
-        {/* Fade gradient + seta no lado direito */}
-        {showFade && (
-          <div
-            className="absolute right-0 top-0 bottom-0 flex items-center justify-end pointer-events-none"
-            style={{ width: 72 }}
-          >
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(to right, transparent 0%, #FAFAFA 70%)",
-              }}
-            />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#9ca3af"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="relative z-10 mr-1"
-              aria-hidden="true"
-            >
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </div>
-        )}
+        {/* Fade direito */}
+        <div
+          className="absolute right-0 top-0 bottom-0 z-10 pointer-events-none"
+          style={{
+            width: 48,
+            background: `linear-gradient(to left, ${FADE_COLOR} 30%, transparent 100%)`,
+            opacity: showRight ? 1 : 0,
+            transition: "opacity 0.2s",
+          }}
+        />
+
+        {/* ── Seta direita ── */}
+        <button
+          onClick={() => scrollBy("right")}
+          aria-label="Rolar categorias para a direita"
+          className="absolute right-0 z-20 flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm transition-all duration-200 hover:shadow-md"
+          style={{
+            opacity: showRight ? 1 : 0,
+            pointerEvents: showRight ? "auto" : "none",
+            transform: showRight ? "scale(1)" : "scale(0.8)",
+          }}
+        >
+          <ChevronRight size={16} strokeWidth={2.5} style={{ color: "#1A1A2E" }} />
+        </button>
       </div>
 
       {/* Esconde scrollbar no Chrome/Safari */}
