@@ -1,142 +1,181 @@
 "use client";
 
-// Conteúdo client-side com as 20 mensagens do Dia das Mães e botões de ação
 import { useState } from "react";
-import { Copy, Share2, Check } from "lucide-react";
+import { Copy, Share2, Heart, Check } from "lucide-react";
 
-interface MensagemData {
+type Categoria = "curta" | "elaborada";
+
+interface MensagemDia {
   id: number;
   titulo: string;
   texto: string;
+  categoria: Categoria;
 }
 
-// 20 mensagens bonitas e originais para o Dia das Mães
-const MENSAGENS_DIA_DAS_MAES: MensagemData[] = [
+const FOTOS_ELABORADAS = [
+  "https://images.unsplash.com/photo-1476234251651-f353703a034d?w=600&q=80",
+  "https://images.unsplash.com/photo-1511895426328-dc8714191011?w=600&q=80",
+  "https://images.unsplash.com/photo-1491013516836-7db643ee125a?w=600&q=80",
+  "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600&q=80",
+];
+
+const MENSAGENS: MensagemDia[] = [
   {
     id: 1,
-    titulo: "O Amor que Não Tem Fim",
-    texto:
-      "Mãe, você é o lar que eu carrego no coração. Em cada escolha, em cada passo difícil, é a sua voz que me guia. Obrigado por existir, por amar sem condições e por me ensinar que o amor verdadeiro não precisa de palavras — ele já se faz presente no seu olhar. Feliz Dia das Mães!",
+    titulo: "O Amor Sem Motivo",
+    texto: "Mãe é o único amor que não precisa de motivo para existir.",
+    categoria: "curta",
   },
   {
     id: 2,
-    titulo: "Você é Meu Maior Presente",
+    titulo: "O Cheiro do Seu Abraço",
     texto:
-      "De todos os presentes que a vida me deu, você, mãe, é o maior de todos. Não porque é perfeita — mas porque é real, é presente, é amor. Cada abraço seu tem o poder de curar o que as palavras não conseguem. Hoje e sempre, te amo.",
+      "Onde quer que eu esteja, levo comigo o cheiro do seu abraço e a certeza do seu amor.",
+    categoria: "curta",
   },
   {
     id: 3,
-    titulo: "Nas Suas Mãos Aprendi Tudo",
+    titulo: "Minha Primeira Casa",
     texto:
-      "Aprendi a caminhar segurando suas mãos. Aprendi a ser forte vendo a sua coragem. Aprendi a amar observando o seu coração. Mãe, você é minha primeira e mais importante professora. Feliz Dia das Mães — que a vida te devolva todo o amor que você semeou.",
+      "Mãe, você foi minha primeira casa — o lugar onde aprendi que o mundo podia ser seguro. Obrigado por ser esse lar que nunca fecha as portas.",
+    categoria: "elaborada",
   },
   {
     id: 4,
-    titulo: "A Força que Vem de Você",
+    titulo: "Palavras Que Faltam",
     texto:
-      "Nos dias em que me sinto fraco, lembro do seu exemplo. Você que enfrentou tempestades com sorriso no rosto, que fez do pouco muito e do nada um lar. Mãe, sua força me inspira todos os dias. Te amo mais do que as palavras conseguem expressar.",
+      "Nenhuma palavra foi inventada ainda que caiba tudo que sinto por você, mãe.",
+    categoria: "curta",
   },
   {
     id: 5,
-    titulo: "Feliz Dia das Mães, Minha Heroína",
+    titulo: "Aprendi Com Você",
     texto:
-      "Nenhum cabo de super-herói, nenhum uniforme ou poderes especiais — só o seu amor. E foi o suficiente para mover montanhas, curar dores e fazer o impossível parecer simples. Você é minha heroína de todo dia. Feliz Dia das Mães!",
+      "Cresci observando suas mãos trabalhando, seus olhos velejando e seu coração nunca desistindo. Foi assim que aprendi o que é força. Feliz Dia das Mães.",
+    categoria: "elaborada",
   },
   {
     id: 6,
-    titulo: "O Melhor Colo do Mundo",
+    titulo: "Conhece o Melhor de Mim",
     texto:
-      "Existem lugares no mundo que a gente nunca esquece. Para mim, o mais especial é o seu colo, mãe. É onde as preocupações somem, onde o mundo fica menor e o amor fica maior. Feliz Dia das Mães — que você sempre tenha um colo para descansar também.",
+      "Mãe é a pessoa que conhece nossa pior versão e ainda assim torce pela melhor.",
+    categoria: "curta",
   },
   {
     id: 7,
-    titulo: "Uma Mensagem da Saudade",
+    titulo: "Saudade Que Aperta",
     texto:
-      "Para quem tem sua mãe por perto: dê um abraço hoje mais longo do que o de costume. Para quem a mãe já partiu: ela ainda vive em cada atitude de amor que você tem. A saudade dói, mas o amor que ela deixou é eterno. Feliz Dia das Mães — seja onde você estiver.",
+      "Tem dias que a saudade aperta tanto que parece que você está aqui. E talvez esteja — em cada escolha que faço, em cada vez que cuido de quem amo. Te amo, mãe.",
+    categoria: "elaborada",
   },
   {
     id: 8,
-    titulo: "Gratidão por Cada Sacrifício",
+    titulo: "Você Me Ensinou a Voar",
     texto:
-      "Mãe, você fez escolhas que eu só entendi anos depois. Abdicou de sonhos para realizar os meus. Acordou cedo quando quis dormir. Fingiu que estava bem quando não estava. E fez tudo isso com amor. Hoje, só quero dizer: obrigado. Do fundo do meu coração.",
+      "Você não me deu asas para me ver voar. Você me ensinou a voar para que eu pudesse voltar.",
+    categoria: "curta",
   },
   {
     id: 9,
-    titulo: "Você é a Primeira Palavra que Aprendi",
+    titulo: "Acreditou Quando Eu Duvidei",
     texto:
-      "A primeira palavra que aprendi a falar foi você. A primeira que aprendi a sentir foi seu amor. E a primeira que repetiria em qualquer idioma seria sempre o mesmo: mãe. Feliz Dia das Mães — você é poesia em forma de pessoa.",
+      "Mãe, eu não precisei entender tudo na vida — precisei só de você acreditando em mim quando eu mesmo duvidei. Isso foi suficiente para tudo.",
+    categoria: "elaborada",
   },
   {
     id: 10,
-    titulo: "Para Minha Mãe que é Tudo",
+    titulo: "Amor Sem Distância",
     texto:
-      "Você é a raiz que me mantém de pé nas tempestades. É o porto seguro onde sempre posso voltar. É o amor que não muda, que não some, que não pede nada em troca. Mãe, você é tudo — e hoje quero que o mundo todo saiba disso. Te amo infinitamente.",
+      "O amor de mãe não tem distância, não tem horário, não tem fim.",
+    categoria: "curta",
   },
   {
     id: 11,
-    titulo: "Seu Sorriso Ilumina Meu Mundo",
+    titulo: "Lugar Que Tem Seu Nome",
     texto:
-      "Tem dias que o mundo pesa demais. Mas aí vem o seu sorriso — e tudo fica mais leve. Você tem esse dom, mãe: o de transformar o ordinário em especial. Feliz Dia das Mães para a mulher que ilumina cada ambiente que entra.",
+      "Se existe um lugar no mundo onde posso ser exatamente quem eu sou, sem medo e sem julgamento, esse lugar tem o seu nome, mãe.",
+    categoria: "elaborada",
   },
   {
     id: 12,
-    titulo: "A Melhor Parte de Mim Vem de Você",
+    titulo: "Chora Pela Sua Alegria",
     texto:
-      "Quando alguém elogia minha força, lembro que aprendi com você. Quando dizem que sou generoso, reconheço o seu reflexo. A melhor versão de mim é aquela que carrega um pedaço da sua essência. Obrigado por me fazer quem eu sou. Feliz Dia das Mães.",
+      "Mãe: a única pessoa que chora de alegria pelas suas conquistas mais do que você mesmo.",
+    categoria: "curta",
   },
   {
     id: 13,
-    titulo: "Um Abraço que Atravessa a Distância",
+    titulo: "Sacrifícios em Silêncio",
     texto:
-      "A distância pode separar corpos, mas nunca separa almas que se amam. Mãe, mesmo longe, seu amor é presença constante. Cada ligação, cada mensagem de voz, cada 'está tudo bem?' é um abraço que atravessa quilômetros. Sinto você sempre perto. Te amo.",
+      "Você abriu mão de tantas coisas em silêncio que só hoje entendo o tamanho do seu amor. Obrigado por cada sacrifício que você nunca chamou assim.",
+    categoria: "elaborada",
   },
   {
     id: 14,
-    titulo: "Mãe, Você Merece o Mundo",
-    texto:
-      "Se eu pudesse te dar o mundo, daria. Mas como não posso, ofereço o que tenho: minha gratidão sem fim, meu amor mais puro e a promessa de estar presente. Você merece cada flor, cada alegria, cada momento de paz. Feliz Dia das Mães.",
+    titulo: "Casa é o Seu Colo",
+    texto: "Casa não é um endereço. Casa é o colo da minha mãe.",
+    categoria: "curta",
   },
   {
     id: 15,
-    titulo: "Obrigado por Nunca Desistir de Mim",
+    titulo: "O Maior Sonho",
     texto:
-      "Nos meus piores momentos, você estava lá. Quando eu duvidei de mim mesmo, você acreditou. Quando eu quis desistir, você me deu a mão e disse: vai conseguir. Mãe, obrigado por nunca desistir de mim. Eu te amo mais do que sei expressar.",
+      "Tem uma foto antiga sua que guardo no coração: você jovem, de olhos cheios de sonhos, segurando minha mão pequena. Hoje entendo — eu era o seu maior sonho. E você é o meu maior amor.",
+    categoria: "elaborada",
   },
   {
     id: 16,
-    titulo: "Para a Mãe Que é Também Amiga",
+    titulo: "Amor de Cada Dia",
     texto:
-      "Você é a amiga que não escolhi — simplesmente ganhei de presente da vida. A que guarda meus segredos, ri das minhas histórias e me diz a verdade com amor. Mãe e amiga: a combinação mais bonita que existe. Feliz Dia das Mães.",
+      "Mãe, você me ensinou que amor de verdade aparece todo dia, não só nas datas especiais.",
+    categoria: "curta",
   },
   {
     id: 17,
-    titulo: "Seu Nome é Amor",
+    titulo: "A Voz Que Me Ergueu",
     texto:
-      "Se tivesse que nomear o amor em uma só palavra, diria o seu nome, mãe. Porque em você aprendi que amar é cuidar sem cobrar, é dar sem esperar, é estar presente mesmo quando dói. Feliz Dia das Mães — que o amor que você dá volte para você multiplicado.",
+      "Quando a vida ficou pesada demais, foi a sua voz que me lembrou que eu conseguia. Você nunca me deixou desistir — nem de mim mesmo. Feliz Dia das Mães.",
+    categoria: "elaborada",
   },
   {
     id: 18,
-    titulo: "A Memória que Guardo com Carinho",
+    titulo: "Nunca Estamos Sozinhos",
     texto:
-      "Tenho guardadas as memórias mais bonitas da minha vida. E em quase todas elas, você aparece. Seu cheiro, seu riso, suas histórias antes de dormir. Mãe, você é memória, é presente e é futuro. Te amo hoje e sempre.",
+      "Todo filho carrega a mãe dentro de si. É por isso que nunca estamos sozinhos.",
+    categoria: "curta",
   },
   {
     id: 19,
-    titulo: "Parabéns à Mãe que Escolheu Amar",
+    titulo: "Ainda Quero Seu Colo",
     texto:
-      "Nenhuma escola prepara para a maternidade. Você aprendeu na prática — errando, acertando, amando. E fez tudo isso com tanto cuidado que parecia que você sempre soube. Parabéns, mãe. Pela escolha de amar todos os dias.",
+      "Mãe, eu cresci. Mas toda vez que algo dói, ainda quero o seu colo. Isso nunca vai mudar — e eu agradeço a Deus por isso todo dia.",
+    categoria: "elaborada",
   },
   {
     id: 20,
-    titulo: "Que Este Dia Seja Tão Especial Quanto Você",
+    titulo: "O Que Permanece",
     texto:
-      "Que hoje seja um dia cheio de flores, abraços, risadas e gratidão. Que cada momento reflita o quanto você é amada e admirada. Você dedicou tanto da sua vida aos outros — que este dia seja só seu. Feliz Dia das Mães, com todo o meu amor.",
+      "O mundo inteiro pode mudar, mas o amor que sinto por você, mãe, é a única coisa que permanece igual.",
+    categoria: "curta",
   },
 ];
 
-// Card de mensagem do Dia das Mães com botões de ação
-function CardMensagem({ mensagem }: { mensagem: MensagemData }) {
+// Atribui fotos apenas para os cards elaborados, em rodízio
+const fotosPorId: Record<number, string> = (() => {
+  let idx = 0;
+  const map: Record<number, string> = {};
+  MENSAGENS.forEach((m) => {
+    if (m.categoria === "elaborada") {
+      map[m.id] = FOTOS_ELABORADAS[idx % FOTOS_ELABORADAS.length];
+      idx++;
+    }
+  });
+  return map;
+})();
+
+function CardCurta({ mensagem }: { mensagem: MensagemDia }) {
   const [copiado, setCopiado] = useState(false);
+  const [favoritado, setFavoritado] = useState(false);
 
   const copiar = async () => {
     try {
@@ -150,62 +189,183 @@ function CardMensagem({ mensagem }: { mensagem: MensagemData }) {
 
   const compartilhar = async () => {
     if (navigator.share) {
-      await navigator.share({
-        title: mensagem.titulo,
-        text: mensagem.texto,
-        url: window.location.href,
-      });
+      await navigator.share({ title: mensagem.titulo, text: mensagem.texto, url: window.location.href });
     } else {
       copiar();
     }
   };
 
   return (
-    <article className="flex flex-col bg-white rounded-2xl shadow-sm border border-pink-100 p-5 gap-4 hover:shadow-md transition-shadow">
-      {/* Número + título */}
-      <div className="flex items-start gap-3">
+    <article
+      className="flex flex-col rounded-2xl overflow-hidden shadow-sm border border-pink-100 hover:shadow-md transition-shadow duration-300"
+      style={{
+        background: "linear-gradient(135deg, #fff5f7 0%, #fce4ec 100%)",
+      }}
+    >
+      <div className="flex flex-col flex-1 p-5 gap-3">
+        {/* Badge */}
         <span
-          className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full text-xs font-bold text-white"
+          className="inline-flex items-center self-start text-xs font-bold px-2.5 py-1 rounded-full text-white"
           style={{ backgroundColor: "#E8537A" }}
         >
-          {mensagem.id}
+          Dia das Mães
         </span>
+
+        {/* Título */}
         <h2
-          className="font-semibold text-[#1A1A2E] leading-snug text-base"
-          style={{ fontFamily: "var(--font-playfair-display), Georgia, serif" }}
+          className="font-semibold text-[#1A1A2E] leading-snug"
+          style={{
+            fontFamily: "var(--font-playfair-display), Georgia, serif",
+            fontSize: 16,
+          }}
         >
           {mensagem.titulo}
         </h2>
+
+        {/* Texto */}
+        <p
+          className="text-gray-700 flex-1 italic"
+          style={{
+            fontFamily: "var(--font-lato), Arial, sans-serif",
+            fontSize: 15,
+            lineHeight: 1.75,
+          }}
+        >
+          &ldquo;{mensagem.texto}&rdquo;
+        </p>
+
+        {/* Botões */}
+        <div className="border-t border-pink-200 pt-3 flex items-center gap-2">
+          <button
+            onClick={compartilhar}
+            className="flex items-center gap-1.5 text-xs font-semibold text-white px-3 py-1.5 rounded-full transition-opacity hover:opacity-90 flex-1 justify-center"
+            style={{ backgroundColor: "#E8537A" }}
+            aria-label="Compartilhar mensagem"
+          >
+            <Share2 size={12} /> Compartilhar
+          </button>
+          <button
+            onClick={copiar}
+            className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 bg-white hover:bg-gray-50 px-3 py-1.5 rounded-full transition-colors border border-pink-200"
+            aria-label="Copiar mensagem"
+          >
+            {copiado ? <Check size={12} /> : <Copy size={12} />}
+            {copiado ? "Copiado!" : "Copiar"}
+          </button>
+          <button
+            onClick={() => setFavoritado(!favoritado)}
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-white hover:bg-pink-50 transition-colors border border-pink-200 flex-shrink-0"
+            aria-label={favoritado ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          >
+            <Heart
+              size={14}
+              style={{ color: favoritado ? "#E8537A" : "#9ca3af" }}
+              fill={favoritado ? "#E8537A" : "none"}
+            />
+          </button>
+        </div>
       </div>
+    </article>
+  );
+}
 
-      {/* Texto da mensagem */}
-      <p
-        className="text-gray-600 leading-relaxed flex-1"
-        style={{
-          fontFamily: "var(--font-lato), Arial, sans-serif",
-          fontSize: 14,
-          lineHeight: 1.8,
-        }}
-      >
-        {mensagem.texto}
-      </p>
+function CardElaborada({ mensagem }: { mensagem: MensagemDia }) {
+  const [copiado, setCopiado] = useState(false);
+  const [favoritado, setFavoritado] = useState(false);
+  const foto = fotosPorId[mensagem.id];
 
-      {/* Botões */}
-      <div className="flex items-center gap-2 pt-1 border-t border-gray-100">
-        <button
-          onClick={compartilhar}
-          className="flex items-center gap-1.5 text-xs font-semibold text-white px-3 py-1.5 rounded-full flex-1 justify-center transition-opacity hover:opacity-90"
+  const copiar = async () => {
+    try {
+      await navigator.clipboard.writeText(mensagem.texto);
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2000);
+    } catch {
+      // fallback silencioso
+    }
+  };
+
+  const compartilhar = async () => {
+    if (navigator.share) {
+      await navigator.share({ title: mensagem.titulo, text: mensagem.texto, url: window.location.href });
+    } else {
+      copiar();
+    }
+  };
+
+  return (
+    <article className="flex flex-col rounded-2xl overflow-hidden bg-white shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
+      {/* Foto */}
+      <div className="relative overflow-hidden flex-shrink-0" style={{ height: 180 }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={foto}
+          alt={`Mensagem do Dia das Mães: ${mensagem.titulo}`}
+          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          loading="lazy"
+        />
+        {/* Badge sobre a foto */}
+        <span
+          className="absolute top-3 left-3 inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-full text-white"
           style={{ backgroundColor: "#E8537A" }}
         >
-          <Share2 size={12} /> Compartilhar
-        </button>
-        <button
-          onClick={copiar}
-          className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-full transition-colors"
+          Dia das Mães
+        </span>
+      </div>
+
+      <div className="flex flex-col flex-1 p-5 gap-3">
+        {/* Título */}
+        <h2
+          className="font-semibold text-[#1A1A2E] leading-snug"
+          style={{
+            fontFamily: "var(--font-playfair-display), Georgia, serif",
+            fontSize: 16,
+          }}
         >
-          {copiado ? <Check size={12} /> : <Copy size={12} />}
-          {copiado ? "Copiado!" : "Copiar"}
-        </button>
+          {mensagem.titulo}
+        </h2>
+
+        {/* Texto */}
+        <p
+          className="text-gray-600 flex-1"
+          style={{
+            fontFamily: "var(--font-lato), Arial, sans-serif",
+            fontSize: 14,
+            lineHeight: 1.8,
+          }}
+        >
+          {mensagem.texto}
+        </p>
+
+        {/* Botões */}
+        <div className="border-t border-gray-100 pt-3 flex items-center gap-2">
+          <button
+            onClick={compartilhar}
+            className="flex items-center gap-1.5 text-xs font-semibold text-white px-3 py-1.5 rounded-full transition-opacity hover:opacity-90 flex-1 justify-center"
+            style={{ backgroundColor: "#E8537A" }}
+            aria-label="Compartilhar mensagem"
+          >
+            <Share2 size={12} /> Compartilhar
+          </button>
+          <button
+            onClick={copiar}
+            className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-full transition-colors"
+            aria-label="Copiar mensagem"
+          >
+            {copiado ? <Check size={12} /> : <Copy size={12} />}
+            {copiado ? "Copiado!" : "Copiar"}
+          </button>
+          <button
+            onClick={() => setFavoritado(!favoritado)}
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 hover:bg-pink-50 transition-colors flex-shrink-0"
+            aria-label={favoritado ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          >
+            <Heart
+              size={14}
+              style={{ color: favoritado ? "#E8537A" : "#9ca3af" }}
+              fill={favoritado ? "#E8537A" : "none"}
+            />
+          </button>
+        </div>
       </div>
     </article>
   );
@@ -213,27 +373,30 @@ function CardMensagem({ mensagem }: { mensagem: MensagemData }) {
 
 export default function DiaDasMaesContent() {
   return (
-    <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
-      <div className="flex items-center justify-between mb-6">
+    <section className="max-w-6xl mx-auto px-4 sm:px-6 py-10 w-full">
+      <div className="text-center mb-8">
         <h2
-          className="text-xl font-semibold text-[#1A1A2E]"
+          className="text-2xl font-semibold text-[#1A1A2E]"
           style={{ fontFamily: "var(--font-playfair-display), Georgia, serif" }}
         >
           20 Mensagens para o Dia das Mães
         </h2>
-        <span
-          className="text-xs text-gray-400"
+        <p
+          className="text-sm text-gray-400 mt-1"
           style={{ fontFamily: "var(--font-lato), Arial, sans-serif" }}
         >
-          Clique em Copiar ou Compartilhar
-        </span>
+          Copie ou compartilhe diretamente no WhatsApp, Instagram e Facebook
+        </p>
       </div>
 
-      {/* Grid 2 colunas desktop, 1 mobile */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {MENSAGENS_DIA_DAS_MAES.map((mensagem) => (
-          <CardMensagem key={mensagem.id} mensagem={mensagem} />
-        ))}
+        {MENSAGENS.map((mensagem) =>
+          mensagem.categoria === "elaborada" ? (
+            <CardElaborada key={mensagem.id} mensagem={mensagem} />
+          ) : (
+            <CardCurta key={mensagem.id} mensagem={mensagem} />
+          )
+        )}
       </div>
     </section>
   );
