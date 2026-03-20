@@ -4,8 +4,8 @@
 import { useState, useEffect } from "react";
 import { Heart, Trash2, Copy, Share2 } from "lucide-react";
 import Link from "next/link";
-import { CATEGORIAS } from "@/components/CategoryFilter";
-import { IMAGENS_CATEGORIA } from "@/components/MessageCard";
+import { CATEGORIAS } from "@/lib/categorias";
+import { IMAGENS_CATEGORIA } from "@/lib/imagens";
 import type { Mensagem } from "@/components/MessageCard";
 
 const STORAGE_KEY = "gotas-favoritos";

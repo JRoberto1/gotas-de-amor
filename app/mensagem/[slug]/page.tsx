@@ -1,7 +1,6 @@
 // Página individual de mensagem — /mensagem/[slug]
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { Copy, Share2 } from "lucide-react";
 import { client } from "@/sanity/lib/client";
 import {
   mensagemPorSlugQuery,
@@ -9,8 +8,8 @@ import {
   todosSlugsQuery,
 } from "@/lib/queries";
 import type { Mensagem } from "@/components/MessageCard";
-import { IMAGENS_CATEGORIA } from "@/components/MessageCard";
-import { CATEGORIAS } from "@/components/CategoryFilter";
+import { IMAGENS_CATEGORIA } from "@/lib/imagens";
+import { CATEGORIAS } from "@/lib/categorias";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import MensagemAcoesClient from "./MensagemAcoesClient";

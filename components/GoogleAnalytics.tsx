@@ -5,11 +5,6 @@ import Script from "next/script";
 const GA_MEASUREMENT_ID = "G-PKDY2M0W1B";
 
 export default function GoogleAnalytics() {
-  if (!GA_MEASUREMENT_ID || GA_MEASUREMENT_ID === "G-XXXXXXXXXX") {
-    // Em desenvolvimento ou sem ID configurado, não carrega o script
-    return null;
-  }
-
   return (
     <>
       <Script

@@ -1,8 +1,8 @@
 // Seção de mensagens relacionadas — server component
 import Link from "next/link";
 import type { Mensagem } from "@/components/MessageCard";
-import { IMAGENS_CATEGORIA } from "@/components/MessageCard";
-import { CATEGORIAS } from "@/components/CategoryFilter";
+import { IMAGENS_CATEGORIA } from "@/lib/imagens";
+import { CATEGORIAS } from "@/lib/categorias";
 
 interface Props {
   mensagens: Mensagem[];

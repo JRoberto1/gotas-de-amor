@@ -6,7 +6,7 @@ import { Copy, Share2, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import CategoryFilter from "./CategoryFilter";
 import MensagensGrid, { type Mensagem, IMAGENS_CATEGORIA, MENSAGENS_FALLBACK } from "./MessageCard";
-import { CATEGORIAS } from "./CategoryFilter";
+import { CATEGORIAS } from "@/lib/categorias";
 import { seedDoDia, embaralharComSeed, dataHojeFormatada } from "@/lib/rotacaoDiaria";
 
 interface MensagensSectionProps {

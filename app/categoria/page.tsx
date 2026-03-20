@@ -1,7 +1,7 @@
 // Índice de categorias — /categoria
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CATEGORIAS } from "@/components/CategoryFilter";
+import { CATEGORIAS } from "@/lib/categorias";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 

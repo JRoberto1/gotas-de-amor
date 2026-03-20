@@ -2,7 +2,7 @@
 import type { MetadataRoute } from "next";
 import { client } from "@/sanity/lib/client";
 import { todosSlugsQuery } from "@/lib/queries";
-import { CATEGORIAS } from "@/components/CategoryFilter";
+import { CATEGORIAS } from "@/lib/categorias";
 
 const BASE_URL = "https://gotasdeamor.com.br";
 
