@@ -19,6 +19,10 @@ export default async function HomePage() {
     mensagens = [];
   }
 
+  const fotos = Object.fromEntries(
+    mensagens.map((m) => [m._id, `https://picsum.photos/seed/${m._id}/600/400`])
+  );
+
   return (
     <>
       <Header />
@@ -51,7 +55,7 @@ export default async function HomePage() {
         </div>
 
         {/* Filtro de categorias + grid de mensagens (client-side) */}
-        <MensagensSection mensagens={mensagens} />
+        <MensagensSection mensagens={mensagens} fotos={fotos} />
 
         {/* Seção de newsletter */}
         <Newsletter />
