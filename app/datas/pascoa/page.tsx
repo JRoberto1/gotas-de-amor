@@ -6,7 +6,8 @@ import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
 import PascoaContent from "./PascoaContent";
 import { CATEGORIAS } from "@/lib/categorias";
-import { getImage, getImages } from "@/lib/pexels";
+import { getImage } from "@/lib/pexels";
+import { getImageFromCatalog } from "@/lib/images-catalog";
 import { client } from "@/sanity/lib/client";
 
 export const metadata: Metadata = {
@@ -70,9 +71,7 @@ export default async function PascoaPage() {
     CATEGORIAS_RELACIONADAS.includes(c.valor)
   );
 
-  // Busca Sanity + Pexels em paralelo — imagens nunca dependem do Sanity
-  // Keys numéricas fixas ("1"–"20") igual ao dia-das-maes
-  const [mensagens, heroUrl, fotosNumericas] = await Promise.all([
+  const [mensagens, heroUrl] = await Promise.all([
     client
       .fetch<MensagemPascoa[]>(
         `*[_type == "mensagem" && "páscoa" in tags] | order(_createdAt asc) {
@@ -81,20 +80,12 @@ export default async function PascoaPage() {
       )
       .catch(() => [] as MensagemPascoa[]),
     getImage(QUERIES_PASCOA[0]),
-    getImages(
-      Array.from({ length: 20 }, (_, i) => ({
-        key: String(i + 1),
-        query: QUERIES_PASCOA[i + 1],
-        page: 1,
-      }))
-    ),
   ]);
 
-  // Mapeia fotos por _id usando a posição — igual ao dia-das-maes com fotosPorId
-  const fotos: Record<string, string> = {};
-  mensagens.forEach((m, i) => {
-    fotos[m._id] = fotosNumericas[String(i + 1)] ?? "";
-  });
+  // Fotos por catálogo verificado — sem chamadas Pexels por card
+  const fotos: Record<string, string> = Object.fromEntries(
+    mensagens.map((m, i) => [m._id, getImageFromCatalog("datas-comemorativas", i)])
+  );
 
   const heroFinal =
     heroUrl ||

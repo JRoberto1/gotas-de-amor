@@ -3,7 +3,7 @@ export const revalidate = 86400; // ISR: revalida a cada 24h
 import { sanityFetch } from "@/sanity/lib/live";
 import { mensagensHomepageQuery } from "@/lib/queries";
 import type { Mensagem } from "@/components/MessageCard";
-import { getFotosParaMensagens } from "@/lib/pexels";
+import { getImageFromCatalog } from "@/lib/images-catalog";
 import Header from "@/components/Header";
 import CarouselDestaque from "@/components/CarouselDestaque";
 import MensagensSection from "@/components/MensagensSection";
@@ -20,7 +20,9 @@ export default async function HomePage() {
     mensagens = [];
   }
 
-  const fotos = await getFotosParaMensagens(mensagens);
+  const fotos = Object.fromEntries(
+    mensagens.map((m, i) => [m._id, getImageFromCatalog(m.categoria, i)])
+  );
 
   return (
     <>

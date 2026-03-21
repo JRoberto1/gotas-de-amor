@@ -9,7 +9,7 @@ import {
 } from "@/lib/queries";
 import type { Mensagem } from "@/components/MessageCard";
 import { CATEGORIAS } from "@/lib/categorias";
-import { getFotosParaMensagens } from "@/lib/pexels";
+import { getImageFromCatalog } from "@/lib/images-catalog";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
@@ -68,7 +68,9 @@ export default async function CategoriaPage({ params, searchParams }: PageProps)
       .catch(() => 0),
   ]);
 
-  const fotos = await getFotosParaMensagens(mensagens);
+  const fotos = Object.fromEntries(
+    mensagens.map((m, i) => [m._id, getImageFromCatalog(m.categoria, i)])
+  );
 
   const totalPaginas = Math.ceil(total / POR_PAGINA);
 
