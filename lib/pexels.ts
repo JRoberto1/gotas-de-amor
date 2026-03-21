@@ -27,7 +27,7 @@ export async function getImage(
     const url = `${BASE_URL}?query=${encodeURIComponent(query)}&per_page=1&page=${page}&orientation=landscape`;
     const res = await fetch(url, {
       headers: { Authorization: apiKey },
-      next: { revalidate: 86400 }, // ISR: revalida a cada 24h
+      cache: "no-store", // temporário: sem cache para bustar Vercel
     });
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
