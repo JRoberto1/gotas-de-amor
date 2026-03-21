@@ -8,7 +8,8 @@ const MENSAGEM_FIELDS = `
   categoria,
   tags,
   slug,
-  destaque
+  destaque,
+  pexelsQuery
 `;
 
 // Busca todas as mensagens publicadas, ordenadas por data de criação

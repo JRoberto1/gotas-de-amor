@@ -18,6 +18,7 @@ export interface Mensagem {
   tags?: string[];
   slug?: { current: string };
   destaque?: boolean;
+  pexelsQuery?: string;
 }
 
 

@@ -80,17 +80,32 @@ export async function getImageParaMensagem(
  * Page é determinístico pelo _id para garantir variedade entre cards.
  * Retorna Record<_id, url>.
  */
+/**
+ * Busca imagens para um array de mensagens Sanity em lotes de 2 com 600ms entre lotes.
+ * Prioridade de query: pexelsQuery (campo Sanity, inglês) > titulo (português, fallback).
+ * Evita HTTP 429 (rate limit por segundo da Pexels).
+ * Retorna Record<_id, url>.
+ */
 export async function getFotosParaMensagens(
   mensagens: Array<{ _id: string; titulo: string; categoria: string; pexelsQuery?: string }>
 ): Promise<Record<string, string>> {
-  const results = await Promise.all(
-    mensagens.map(async (m) => {
-      const query = m.pexelsQuery || m.titulo;
-      // page=1 sempre — usa sempre o primeiro resultado (mais confiável)
-      const url = await getImageParaMensagem(query, m.categoria, 1);
-      return { id: m._id, url };
-    })
-  );
+  const CHUNK = 2;
+  const DELAY = 600;
+  const results: Array<{ id: string; url: string }> = [];
+
+  for (let i = 0; i < mensagens.length; i += CHUNK) {
+    if (i > 0) await new Promise((r) => setTimeout(r, DELAY));
+    const lote = mensagens.slice(i, i + CHUNK);
+    const loteResults = await Promise.all(
+      lote.map(async (m) => {
+        const query = m.pexelsQuery || m.titulo;
+        const url = await getImageParaMensagem(query, m.categoria, 1);
+        return { id: m._id, url };
+      })
+    );
+    results.push(...loteResults);
+  }
+
   return Object.fromEntries(results.map(({ id, url }) => [id, url]));
 }
 
@@ -103,7 +118,7 @@ export async function getImages(
   queries: Array<{ key: string; query: string; page?: number }>
 ): Promise<Record<string, string>> {
   const CHUNK = 2;
-  const DELAY = 500; // ms entre lotes
+  const DELAY = 600; // ms entre lotes
   const results: Array<{ key: string; url: string }> = [];
 
   for (let i = 0; i < queries.length; i += CHUNK) {

@@ -17,7 +17,9 @@ export default async function HomePage() {
   try {
     const resultado = await sanityFetch({ query: todasMensagensQuery });
     mensagens = (resultado.data as Mensagem[]) ?? [];
-    fotos = await getFotosParaMensagens(mensagens);
+    // Limita a 24 imagens para evitar rate limit do Pexels (200 msgs × 600ms = 60s)
+    // Mensagens além das 24 primeiras usam fallback de gradiente no card
+    fotos = await getFotosParaMensagens(mensagens.slice(0, 24));
   } catch {
     // Se o Sanity não estiver configurado, MensagensSection usa fallback automaticamente
     mensagens = [];
