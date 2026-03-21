@@ -41,7 +41,7 @@ const QUERIES_HOMEPAGE = [
 export default async function HomePage() {
   // Busca mensagens e imagens em paralelo — imagens nunca dependem do Sanity
   let mensagens: Mensagem[] = [];
-  let fotos: Record<string, string> = {};
+  const fotos: Record<string, string> = {};
 
   const [resultado, fotosNumericas] = await Promise.allSettled([
     sanityFetch({ query: todasMensagensQuery }),
