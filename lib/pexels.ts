@@ -3,6 +3,20 @@
 
 const BASE_URL = "https://api.pexels.com/v1/search";
 
+// Queries por categoria — 5 variações por categoria para rotacionar entre cards
+const QUERIES_POR_CATEGORIA: Record<string, string[]> = {
+  "amor": ["couple love romantic sunset", "love embrace tender couple", "romantic flowers hearts", "couple walking together", "love kiss sunset beach"],
+  "familia": ["family together happy home", "mother child love", "father daughter playing", "grandparents grandchildren joy", "family dinner table warm"],
+  "motivacao": ["person mountain sunrise arms", "running motivation fitness", "success achievement goal", "woman confident strong", "sunrise new day motivation"],
+  "amizade": ["friends laughing together", "friendship outdoor joy", "best friends hugging", "friends coffee talking", "group friends smiling"],
+  "fe-espiritualidade": ["church light stained glass", "prayer hands light", "cross sunrise faith", "bible open light", "candle prayer peaceful"],
+  "bom-dia": ["sunrise morning coffee", "morning golden light", "breakfast cozy morning", "sunrise sky orange", "morning nature peaceful"],
+  "boa-noite": ["moon stars night sky", "night city lights", "candle night cozy", "starry night peaceful", "sunset evening sky"],
+  "aniversario": ["birthday cake candles", "celebration confetti joy", "birthday balloons colorful", "party celebration happy", "birthday flowers gift"],
+  "reflexao": ["person thinking nature", "lake reflection peaceful", "meditation calm nature", "books reading cozy", "autumn leaves reflection"],
+  "datas-comemorativas": ["celebration flowers spring", "holiday family together", "festive decoration colorful", "seasonal flowers bouquet", "holiday celebration warm"],
+};
+
 // Cache em processo — evita requisições duplicadas durante o build/renderização
 const _cache = new Map<string, string>();
 
@@ -77,8 +91,8 @@ export async function getImageParaMensagem(
  * Retorna Record<_id, url>.
  */
 /**
- * Busca imagens para um array de mensagens Sanity em lotes de 2 com 600ms entre lotes.
- * Prioridade de query: pexelsQuery (campo Sanity, inglês) > titulo (português, fallback).
+ * Busca imagens para um array de mensagens em lotes de 2 com 600ms entre lotes.
+ * Usa QUERIES_POR_CATEGORIA com rotação por índice global para variedade entre cards.
  * Evita HTTP 429 (rate limit por segundo da Pexels).
  * Retorna Record<_id, url>.
  */
@@ -93,9 +107,11 @@ export async function getFotosParaMensagens(
     if (i > 0) await new Promise((r) => setTimeout(r, DELAY));
     const lote = mensagens.slice(i, i + CHUNK);
     const loteResults = await Promise.all(
-      lote.map(async (m) => {
-        const query = m.pexelsQuery || m.titulo;
-        const url = await getImageParaMensagem(query, m.categoria, 1);
+      lote.map(async (m, loteIndex) => {
+        const globalIndex = i + loteIndex;
+        const queries = QUERIES_POR_CATEGORIA[m.categoria] ?? ["nature beautiful peaceful"];
+        const query = queries[globalIndex % queries.length];
+        const url = await getImage(query, { page: 1 });
         return { id: m._id, url };
       })
     );
