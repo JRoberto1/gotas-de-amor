@@ -4,6 +4,7 @@
 import { useState, useEffect } from "react";
 import { Copy, Share2, CalendarDays } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import CategoryFilter from "./CategoryFilter";
 import MensagensGrid, { type Mensagem, IMAGENS_CATEGORIA, MENSAGENS_FALLBACK } from "./MessageCard";
 import { CATEGORIAS } from "@/lib/categorias";
@@ -160,7 +161,7 @@ function CardMensagemDoDia({ mensagem, foto }: { mensagem: Mensagem; foto?: stri
 }
 
 export default function MensagensSection({ mensagens, fotos }: MensagensSectionProps) {
-  const [categoriaAtiva, setCategoriaAtiva] = useState<string | null>(null);
+  const router = useRouter();
 
   // Seed calculado apenas no cliente para evitar hydration mismatch
   const [seedDiario, setSeedDiario] = useState<number | null>(null);
@@ -172,43 +173,54 @@ export default function MensagensSection({ mensagens, fotos }: MensagensSectionP
   // Usa dados do Sanity se disponíveis, senão usa fallback
   const fonte = mensagens.length > 0 ? mensagens : MENSAGENS_FALLBACK;
 
-  // Mensagem do Dia: sempre da fonte completa (sem filtro de categoria)
+  // Mensagem do Dia: sempre da fonte completa
   const mensagemDia =
     seedDiario !== null && fonte.length > 0
       ? embaralharComSeed(fonte, seedDiario)[0]
       : null;
 
-  // Mensagens filtradas pela categoria ativa
-  const filtradas = categoriaAtiva
-    ? fonte.filter((m) => m.categoria === categoriaAtiva)
-    : fonte;
-
-  // Grid rotativo: embaralhado com seed do dia para ordem consistente entre usuários
+  // Grid rotativo com seed do dia (sem filtro — homepage sempre mostra todas as 24)
   const gridRotativo =
-    seedDiario !== null ? embaralharComSeed(filtradas, seedDiario) : filtradas;
+    seedDiario !== null ? embaralharComSeed(fonte, seedDiario) : fonte;
 
-  // Remove a Mensagem do Dia do grid quando sem filtro para evitar duplicata
-  const gridFinal =
-    !categoriaAtiva && mensagemDia
-      ? gridRotativo.filter((m) => m._id !== mensagemDia._id)
-      : gridRotativo;
+  // Remove a Mensagem do Dia do grid para evitar duplicata
+  const gridFinal = mensagemDia
+    ? gridRotativo.filter((m) => m._id !== mensagemDia._id)
+    : gridRotativo;
 
-  // Exibe a Mensagem do Dia apenas sem filtro de categoria ativo
-  const mostrarMensagemDoDia = !categoriaAtiva && mensagemDia !== null;
+  // Pills navegam para a página da categoria em vez de filtrar na homepage
+  const handleCategoria = (categoria: string | null) => {
+    if (categoria === null) {
+      router.push("/categoria");
+    } else {
+      router.push(`/categoria/${categoria}`);
+    }
+  };
 
   return (
     <section className="flex-1 w-full">
-      {/* Filtro de categorias em pills com scroll horizontal */}
-      <CategoryFilter categoriaAtiva={categoriaAtiva} onChange={setCategoriaAtiva} />
+      {/* Filtro de categorias — clique navega para /categoria/[slug] */}
+      <CategoryFilter categoriaAtiva={null} onChange={handleCategoria} />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-12">
-        {/* Card "Mensagem do Dia" acima do grid — só quando sem filtro ativo */}
-        {mostrarMensagemDoDia && mensagemDia && (
+        {/* Card "Mensagem do Dia" acima do grid */}
+        {mensagemDia && (
           <CardMensagemDoDia mensagem={mensagemDia} foto={fotos?.[mensagemDia._id]} />
         )}
 
-        {/* Grid de mensagens rotativo — passa a lista já ordenada com seed do dia */}
+        {/* Grid de mensagens rotativo */}
         <MensagensGrid mensagens={gridFinal} fotos={fotos} categoriaAtiva={null} />
+
+        {/* Botão "Ver mais mensagens" */}
+        <div className="flex justify-center mt-10">
+          <Link
+            href="/categoria"
+            className="inline-flex items-center gap-2 px-8 py-3 rounded-full text-sm font-semibold text-white transition-opacity hover:opacity-90"
+            style={{ backgroundColor: "#E8537A" }}
+          >
+            Ver mais mensagens
+          </Link>
+        </div>
       </div>
     </section>
   );

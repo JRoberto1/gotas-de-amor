@@ -1,7 +1,7 @@
 // Homepage do Gotas de Amor — server component que busca dados do Sanity
 export const revalidate = 86400; // ISR: revalida a cada 24h
 import { sanityFetch } from "@/sanity/lib/live";
-import { todasMensagensQuery } from "@/lib/queries";
+import { mensagensHomepageQuery } from "@/lib/queries";
 import type { Mensagem } from "@/components/MessageCard";
 import Header from "@/components/Header";
 import CarouselDestaque from "@/components/CarouselDestaque";
@@ -13,7 +13,7 @@ export default async function HomePage() {
   let mensagens: Mensagem[] = [];
 
   try {
-    const resultado = await sanityFetch({ query: todasMensagensQuery });
+    const resultado = await sanityFetch({ query: mensagensHomepageQuery });
     mensagens = (resultado.data as Mensagem[]) ?? [];
   } catch {
     mensagens = [];

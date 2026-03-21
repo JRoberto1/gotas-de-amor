@@ -19,6 +19,13 @@ export const todasMensagensQuery = `
   }
 `;
 
+// Busca as 24 mensagens mais recentes para a homepage
+export const mensagensHomepageQuery = `
+  *[_type == "mensagem"] | order(_createdAt desc) [0..23] {
+    ${MENSAGEM_FIELDS}
+  }
+`;
+
 // Busca mensagens de uma categoria específica
 export const mensagensPorCategoriaQuery = `
   *[_type == "mensagem" && categoria == $categoria] | order(_createdAt desc) {
