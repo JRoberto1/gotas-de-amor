@@ -6,8 +6,19 @@ const BASE_URL = "https://api.pexels.com/v1/search";
 // Cache em processo — evita requisições duplicadas durante o build/renderização
 const _cache = new Map<string, string>();
 
+/** Hash determinístico a partir de uma string — devolve número não-negativo */
+function strHash(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = (Math.imul(h, 31) + s.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
 /**
  * Busca uma imagem no Pexels por query de texto.
+ * Busca per_page=15 resultados e escolhe um deterministicamente pelo hash da query
+ * para garantir variedade sem ser sempre o primeiro resultado.
  * Retorna a URL da foto ou string vazia se a API não estiver configurada ou falhar.
  */
 export async function getImage(
@@ -24,7 +35,7 @@ export async function getImage(
   }
 
   try {
-    const url = `${BASE_URL}?query=${encodeURIComponent(query)}&per_page=1&page=${page}&orientation=landscape`;
+    const url = `${BASE_URL}?query=${encodeURIComponent(query)}&per_page=15&page=${page}&orientation=landscape`;
     const res = await fetch(url, {
       headers: { Authorization: apiKey },
       next: { revalidate: 86400 }, // ISR: revalida a cada 24h
@@ -33,7 +44,15 @@ export async function getImage(
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const data = await res.json();
-    const photo = data.photos?.[0];
+    const photos: unknown[] = data.photos ?? [];
+    if (!photos.length) {
+      _cache.set(key, "");
+      return "";
+    }
+
+    // Escolha determinística: hash(query+page) % total — evita sempre o primeiro
+    const pick = strHash(query + page) % photos.length;
+    const photo = photos[pick] as Record<string, Record<string, string>>;
     const photoUrl: string =
       photo?.src?.large2x ?? photo?.src?.large ?? photo?.src?.medium ?? "";
 
@@ -76,17 +95,20 @@ export async function getImageParaMensagem(
 
 /**
  * Busca imagens para um array de mensagens Sanity em paralelo.
- * Usa o título como query + page determinístico pelo _id + fallback pela categoria.
+ * Prioridade: pexelsQuery > titulo > categoria (fallback).
+ * Page é determinístico pelo _id para garantir variedade entre cards.
  * Retorna Record<_id, url>.
  */
 export async function getFotosParaMensagens(
-  mensagens: Array<{ _id: string; titulo: string; categoria: string }>
+  mensagens: Array<{ _id: string; titulo: string; categoria: string; pexelsQuery?: string }>
 ): Promise<Record<string, string>> {
   const results = await Promise.all(
-    mensagens.map(async (m) => ({
-      id: m._id,
-      url: await getImageParaMensagem(m.titulo, m.categoria, pageFromId(m._id)),
-    }))
+    mensagens.map(async (m) => {
+      const query = m.pexelsQuery || m.titulo;
+      const page = pageFromId(m._id);
+      const url = await getImageParaMensagem(query, m.categoria, page);
+      return { id: m._id, url };
+    })
   );
   return Object.fromEntries(results.map(({ id, url }) => [id, url]));
 }

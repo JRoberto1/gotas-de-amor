@@ -32,6 +32,30 @@ export const metadata: Metadata = {
 
 const CATEGORIAS_RELACIONADAS = ["fe-espiritualidade", "familia", "amor"];
 
+// Queries em inglês curadas manualmente para garantir imagens relevantes e coloridas
+const PEXELS_QUERIES: Record<string, string> = {
+  "Páscoa de Renovação":             "Easter sunrise flowers spring hope",
+  "Ele Ressuscitou":                 "sunrise golden light dawn sky",
+  "Recomeço de Páscoa":              "spring bloom flowers garden new",
+  "Paz Que Vem da Fé":               "Easter candle light peaceful prayer",
+  "Páscoa em Família":               "family table dinner together happy",
+  "Amor Que Não Tem Fim":            "Easter cross love light golden church",
+  "Primavera da Alma":               "spring flowers colorful bloom garden",
+  "Chocolate e Gratidão":            "Easter chocolate eggs basket sweet",
+  "Vitória Sobre Tudo":              "victory celebration triumph arms raised",
+  "Feliz Páscoa Meu Amor":           "Easter couple love flowers romantic spring",
+  "Para os Filhos na Páscoa":        "children happy playing outdoors joy",
+  "Páscoa de Cura":                  "healing nature light hope restoration",
+  "Amigo Feliz Páscoa":              "Easter friends celebrate outdoor colorful",
+  "A Pedra Foi Removida":            "clear path light mountain faith walk",
+  "Páscoa de Luz":                   "Easter candle light golden glow warm",
+  "Ressurreição e Esperança":        "Easter dawn promise horizon hope beautiful sky",
+  "Páscoa de Graça":                 "grace gratitude Easter gift light nature",
+  "Tradição de Amor":                "Easter family tradition warm gathering",
+  "Mensagem de Páscoa Para Mãe":     "mother flowers spring love bouquet",
+  "Esperança Viva":                  "joy dance celebrate colorful happy",
+};
+
 export default async function PascoaPage() {
   const categoriasLink = CATEGORIAS.filter((c) =>
     CATEGORIAS_RELACIONADAS.includes(c.valor)
@@ -41,7 +65,7 @@ export default async function PascoaPage() {
   const mensagens = await client
     .fetch<MensagemPascoa[]>(
       `*[_type == "mensagem" && "páscoa" in tags] | order(_createdAt asc) {
-        _id, titulo, texto, destaque, slug
+        _id, titulo, texto, destaque, slug, pexelsQuery
       }`
     )
     .catch(() => [] as MensagemPascoa[]);
@@ -50,7 +74,13 @@ export default async function PascoaPage() {
   const [heroUrl, fotos] = await Promise.all([
     getImage("Easter spring flowers sunrise hope"),
     getFotosParaMensagens(
-      mensagens.map((m) => ({ _id: m._id, titulo: m.titulo, categoria: "páscoa" }))
+      mensagens.map((m) => ({
+        _id: m._id,
+        titulo: m.titulo,
+        categoria: "páscoa",
+        // query curada > campo Sanity > título (fallback final em getFotosParaMensagens)
+        pexelsQuery: PEXELS_QUERIES[m.titulo] ?? m.pexelsQuery ?? undefined,
+      }))
     ),
   ]);
 

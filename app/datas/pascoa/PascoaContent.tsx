@@ -9,6 +9,7 @@ export interface MensagemPascoa {
   texto: string;
   destaque?: boolean;
   slug?: { current: string };
+  pexelsQuery?: string;
 }
 
 function CardPascoa({
