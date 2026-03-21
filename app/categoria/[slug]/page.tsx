@@ -9,6 +9,7 @@ import {
 } from "@/lib/queries";
 import type { Mensagem } from "@/components/MessageCard";
 import { CATEGORIAS } from "@/lib/categorias";
+import { getFotosParaMensagens } from "@/lib/pexels";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
@@ -61,11 +62,13 @@ export default async function CategoriaPage({ params, searchParams }: PageProps)
         inicio,
         fim,
       })
-      .catch(() => []),
+      .catch(() => [] as Mensagem[]),
     client
       .fetch<number>(contarMensagensPorCategoriaQuery, { categoria: slug })
       .catch(() => 0),
   ]);
+
+  const fotos = await getFotosParaMensagens(mensagens);
 
   const totalPaginas = Math.ceil(total / POR_PAGINA);
 
@@ -119,6 +122,7 @@ export default async function CategoriaPage({ params, searchParams }: PageProps)
         <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 py-10">
           <CategoriaGrid
             mensagens={mensagens}
+            fotos={fotos}
             pagina={pagina}
             totalPaginas={totalPaginas}
             slugCategoria={slug}

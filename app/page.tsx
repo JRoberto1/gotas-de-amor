@@ -2,6 +2,7 @@
 import { sanityFetch } from "@/sanity/lib/live";
 import { todasMensagensQuery } from "@/lib/queries";
 import type { Mensagem } from "@/components/MessageCard";
+import { getFotosParaMensagens } from "@/lib/pexels";
 import Header from "@/components/Header";
 import CarouselDestaque from "@/components/CarouselDestaque";
 import MensagensSection from "@/components/MensagensSection";
@@ -11,10 +12,12 @@ import Footer from "@/components/Footer";
 export default async function HomePage() {
   // Busca todas as mensagens do Sanity com suporte a live preview
   let mensagens: Mensagem[] = [];
+  let fotos: Record<string, string> = {};
 
   try {
     const resultado = await sanityFetch({ query: todasMensagensQuery });
     mensagens = (resultado.data as Mensagem[]) ?? [];
+    fotos = await getFotosParaMensagens(mensagens);
   } catch {
     // Se o Sanity não estiver configurado, MensagensSection usa fallback automaticamente
     mensagens = [];
@@ -52,7 +55,7 @@ export default async function HomePage() {
         </div>
 
         {/* Filtro de categorias + grid de mensagens (client-side) */}
-        <MensagensSection mensagens={mensagens} />
+        <MensagensSection mensagens={mensagens} fotos={fotos} />
 
         {/* Seção de newsletter */}
         <Newsletter />

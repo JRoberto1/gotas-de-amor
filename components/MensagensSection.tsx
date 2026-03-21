@@ -11,10 +11,11 @@ import { seedDoDia, embaralharComSeed, dataHojeFormatada } from "@/lib/rotacaoDi
 
 interface MensagensSectionProps {
   mensagens: Mensagem[];
+  fotos?: Record<string, string>;
 }
 
 // Card especial "Mensagem do Dia" — ocupa largura total acima do grid
-function CardMensagemDoDia({ mensagem }: { mensagem: Mensagem }) {
+function CardMensagemDoDia({ mensagem, foto }: { mensagem: Mensagem; foto?: string }) {
   const [copiado, setCopiado] = useState(false);
   const [dataHoje, setDataHoje] = useState("");
 
@@ -24,7 +25,7 @@ function CardMensagemDoDia({ mensagem }: { mensagem: Mensagem }) {
   }, []);
 
   const categoriaConfig = CATEGORIAS.find((c) => c.valor === mensagem.categoria);
-  const imagem = IMAGENS_CATEGORIA[mensagem.categoria] ?? IMAGENS_CATEGORIA["reflexao"];
+  const imagem = foto || (IMAGENS_CATEGORIA[mensagem.categoria] ?? IMAGENS_CATEGORIA["reflexao"]);
   const slug = mensagem.slug?.current;
 
   const copiar = async () => {
@@ -158,7 +159,7 @@ function CardMensagemDoDia({ mensagem }: { mensagem: Mensagem }) {
   );
 }
 
-export default function MensagensSection({ mensagens }: MensagensSectionProps) {
+export default function MensagensSection({ mensagens, fotos }: MensagensSectionProps) {
   const [categoriaAtiva, setCategoriaAtiva] = useState<string | null>(null);
 
   // Seed calculado apenas no cliente para evitar hydration mismatch
@@ -203,11 +204,11 @@ export default function MensagensSection({ mensagens }: MensagensSectionProps) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pb-12">
         {/* Card "Mensagem do Dia" acima do grid — só quando sem filtro ativo */}
         {mostrarMensagemDoDia && mensagemDia && (
-          <CardMensagemDoDia mensagem={mensagemDia} />
+          <CardMensagemDoDia mensagem={mensagemDia} foto={fotos?.[mensagemDia._id]} />
         )}
 
         {/* Grid de mensagens rotativo — passa a lista já ordenada com seed do dia */}
-        <MensagensGrid mensagens={gridFinal} categoriaAtiva={null} />
+        <MensagensGrid mensagens={gridFinal} fotos={fotos} categoriaAtiva={null} />
       </div>
     </section>
   );

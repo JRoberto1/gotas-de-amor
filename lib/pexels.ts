@@ -9,9 +9,6 @@ const _cache = new Map<string, string>();
 /**
  * Busca uma imagem no Pexels por query de texto.
  * Retorna a URL da foto ou string vazia se a API não estiver configurada ou falhar.
- *
- * @param query  Termo de busca em inglês (ex: "mother daughter love")
- * @param page   Página de resultados para variar a foto (default: 1)
  */
 export async function getImage(
   query: string,
@@ -46,6 +43,52 @@ export async function getImage(
     console.error(`[pexels] Falha para "${query}" (page ${page}):`, err);
     return "";
   }
+}
+
+/**
+ * Gera um número de página 1–5 deterministicamente a partir de um ID Sanity.
+ * Garante variação entre cards sem aleatoriedade a cada render.
+ */
+export function pageFromId(id: string): number {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = (hash * 31 + id.charCodeAt(i)) & 0xfffff;
+  }
+  return (hash % 5) + 1;
+}
+
+/**
+ * Busca imagem usando o título como query principal.
+ * Se não encontrar resultado, faz fallback para a categoria.
+ */
+export async function getImageParaMensagem(
+  titulo: string,
+  categoria: string,
+  page: number
+): Promise<string> {
+  const url = await getImage(titulo, { page });
+  if (url) return url;
+
+  // Fallback: categoria (slug → palavras)
+  const queryFallback = categoria.replace(/-/g, " ");
+  return getImage(queryFallback, { page });
+}
+
+/**
+ * Busca imagens para um array de mensagens Sanity em paralelo.
+ * Usa o título como query + page determinístico pelo _id + fallback pela categoria.
+ * Retorna Record<_id, url>.
+ */
+export async function getFotosParaMensagens(
+  mensagens: Array<{ _id: string; titulo: string; categoria: string }>
+): Promise<Record<string, string>> {
+  const results = await Promise.all(
+    mensagens.map(async (m) => ({
+      id: m._id,
+      url: await getImageParaMensagem(m.titulo, m.categoria, pageFromId(m._id)),
+    }))
+  );
+  return Object.fromEntries(results.map(({ id, url }) => [id, url]));
 }
 
 /**

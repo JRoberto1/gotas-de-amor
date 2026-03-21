@@ -8,6 +8,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Props {
   mensagens: Mensagem[];
+  fotos: Record<string, string>;
   pagina: number;
   totalPaginas: number;
   slugCategoria: string;
@@ -15,6 +16,7 @@ interface Props {
 
 export default function CategoriaGrid({
   mensagens,
+  fotos,
   pagina,
   totalPaginas,
   slugCategoria,
@@ -24,7 +26,7 @@ export default function CategoriaGrid({
   return (
     <div className="flex flex-col gap-8">
       {/* Grid reutilizando o componente padrão */}
-      <MensagensGrid mensagens={mensagens} categoriaAtiva={null} />
+      <MensagensGrid mensagens={mensagens} fotos={fotos} categoriaAtiva={null} />
 
       {/* Paginação */}
       {totalPaginas > 1 && (

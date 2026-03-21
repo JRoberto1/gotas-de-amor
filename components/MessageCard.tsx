@@ -30,13 +30,13 @@ function truncarTexto(texto: string, maxChars: number): string {
 }
 
 // Card individual — foto em cima (180px) + corpo branco embaixo
-function MessageCard({ mensagem }: { mensagem: Mensagem }) {
+function MessageCard({ mensagem, foto }: { mensagem: Mensagem; foto?: string }) {
   const [copiado, setCopiado] = useState(false);
   const [favoritado, setFavoritado] = useState(false);
   const [expandido, setExpandido] = useState(false);
 
   const categoriaConfig = CATEGORIAS.find((c) => c.valor === mensagem.categoria);
-  const imagem = IMAGENS_CATEGORIA[mensagem.categoria] ?? IMAGENS_CATEGORIA["reflexao"];
+  const imagem = foto || (IMAGENS_CATEGORIA[mensagem.categoria] ?? IMAGENS_CATEGORIA["reflexao"]);
   const altText = ALT_CATEGORIA[mensagem.categoria] ?? "Imagem temática da mensagem";
   const textoExibido = expandido ? mensagem.texto : truncarTexto(mensagem.texto, 120);
   const precisaExpandir = mensagem.texto.length > 120;
@@ -293,6 +293,7 @@ export const MENSAGENS_FALLBACK: Mensagem[] = [
 
 interface MensagensGridProps {
   mensagens: Mensagem[];
+  fotos?: Record<string, string>;
   carregando?: boolean;
   categoriaAtiva: string | null;
 }
@@ -300,6 +301,7 @@ interface MensagensGridProps {
 // Grid de mensagens — 2 colunas desktop, 1 mobile
 export default function MensagensGrid({
   mensagens,
+  fotos,
   carregando = false,
   categoriaAtiva,
 }: MensagensGridProps) {
@@ -340,7 +342,7 @@ export default function MensagensGrid({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {filtradas.map((mensagem) => (
-        <MessageCard key={mensagem._id} mensagem={mensagem} />
+        <MessageCard key={mensagem._id} mensagem={mensagem} foto={fotos?.[mensagem._id]} />
       ))}
     </div>
   );
