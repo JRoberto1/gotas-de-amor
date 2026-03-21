@@ -12,6 +12,21 @@ export interface MensagemPascoa {
   pexelsQuery?: string;
 }
 
+// Gradiente de fallback quando a imagem falha ou não é fornecida
+const FALLBACK_GRADIENTS = [
+  "linear-gradient(135deg, #a8edea, #fed6e3)",
+  "linear-gradient(135deg, #d4fc79, #96e6a1)",
+  "linear-gradient(135deg, #ffecd2, #fcb69f)",
+  "linear-gradient(135deg, #a1c4fd, #c2e9fb)",
+  "linear-gradient(135deg, #fbc2eb, #a6c1ee)",
+];
+
+function gradientFallback(id: string): string {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) & 0xffff;
+  return FALLBACK_GRADIENTS[h % FALLBACK_GRADIENTS.length];
+}
+
 function CardPascoa({
   mensagem,
   foto,
@@ -21,6 +36,7 @@ function CardPascoa({
 }) {
   const [copiado, setCopiado] = useState(false);
   const [favoritado, setFavoritado] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const copiar = async () => {
     try {
@@ -43,14 +59,23 @@ function CardPascoa({
   return (
     <article className="flex flex-col rounded-2xl overflow-hidden bg-white shadow-sm border border-green-100 hover:shadow-md transition-shadow duration-300">
       {/* Foto */}
-      <div className="relative overflow-hidden flex-shrink-0" style={{ height: 180 }}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={foto}
-          alt={`Mensagem de Páscoa: ${mensagem.titulo}`}
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-          loading="lazy"
-        />
+      <div
+        className="relative overflow-hidden flex-shrink-0"
+        style={{
+          height: 180,
+          background: (!foto || imgError) ? gradientFallback(mensagem._id) : undefined,
+        }}
+      >
+        {foto && !imgError && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={foto}
+            alt={`Mensagem de Páscoa: ${mensagem.titulo}`}
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            loading="lazy"
+            onError={() => setImgError(true)}
+          />
+        )}
         <span
           className="absolute top-3 left-3 inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-full text-white"
           style={{ backgroundColor: "#52B788" }}

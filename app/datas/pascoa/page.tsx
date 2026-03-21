@@ -32,28 +32,28 @@ export const metadata: Metadata = {
 
 const CATEGORIAS_RELACIONADAS = ["fe-espiritualidade", "familia", "amor"];
 
-// Queries em inglês curadas manualmente para garantir imagens relevantes e coloridas
+// Queries simples em inglês — retornam resultados confiáveis no Pexels (page=1)
 const PEXELS_QUERIES: Record<string, string> = {
-  "Páscoa de Renovação":             "Easter sunrise flowers spring hope",
-  "Ele Ressuscitou":                 "sunrise golden light dawn sky",
-  "Recomeço de Páscoa":              "spring bloom flowers garden new",
-  "Paz Que Vem da Fé":               "Easter candle light peaceful prayer",
-  "Páscoa em Família":               "family table dinner together happy",
-  "Amor Que Não Tem Fim":            "Easter cross love light golden church",
-  "Primavera da Alma":               "spring flowers colorful bloom garden",
-  "Chocolate e Gratidão":            "Easter chocolate eggs basket sweet",
-  "Vitória Sobre Tudo":              "victory celebration triumph arms raised",
-  "Feliz Páscoa Meu Amor":           "Easter couple love flowers romantic spring",
-  "Para os Filhos na Páscoa":        "children happy playing outdoors joy",
-  "Páscoa de Cura":                  "healing nature light hope restoration",
-  "Amigo Feliz Páscoa":              "Easter friends celebrate outdoor colorful",
-  "A Pedra Foi Removida":            "clear path light mountain faith walk",
-  "Páscoa de Luz":                   "Easter candle light golden glow warm",
-  "Ressurreição e Esperança":        "Easter dawn promise horizon hope beautiful sky",
-  "Páscoa de Graça":                 "grace gratitude Easter gift light nature",
-  "Tradição de Amor":                "Easter family tradition warm gathering",
-  "Mensagem de Páscoa Para Mãe":     "mother flowers spring love bouquet",
-  "Esperança Viva":                  "joy dance celebrate colorful happy",
+  "Páscoa de Renovação":             "cross sunrise easter",
+  "Ele Ressuscitou":                 "sunrise golden sky morning",
+  "Recomeço de Páscoa":              "spring flowers pink white",
+  "Paz Que Vem da Fé":               "candle light peace",
+  "Páscoa em Família":               "family table meal together",
+  "Amor Que Não Tem Fim":            "cross light church",
+  "Primavera da Alma":               "flowers spring bloom pink",
+  "Chocolate e Gratidão":            "chocolate eggs easter basket",
+  "Vitória Sobre Tudo":              "sunrise sky clouds light",
+  "Feliz Páscoa Meu Amor":           "flowers bouquet pink spring",
+  "Para os Filhos na Páscoa":        "children nature outdoor happy",
+  "Páscoa de Cura":                  "hands prayer light",
+  "Amigo Feliz Páscoa":              "friends outdoor smiling",
+  "A Pedra Foi Removida":            "path light nature open",
+  "Páscoa de Luz":                   "candle flame light dark",
+  "Ressurreição e Esperança":        "horizon dawn sky sunrise",
+  "Páscoa de Graça":                 "dove white sky flying",
+  "Tradição de Amor":                "family dinner table warm",
+  "Mensagem de Páscoa Para Mãe":     "mother daughter flowers garden",
+  "Esperança Viva":                  "butterfly flower spring colorful",
 };
 
 export default async function PascoaPage() {
