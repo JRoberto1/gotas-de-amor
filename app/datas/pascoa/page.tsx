@@ -32,29 +32,30 @@ export const metadata: Metadata = {
 
 const CATEGORIAS_RELACIONADAS = ["fe-espiritualidade", "familia", "amor"];
 
-// Queries Pexels fixas por posição (ordem do Sanity: _createdAt asc)
-// Igual ao padrão do dia-das-maes — sem lookup por título
-const QUERIES_POR_POSICAO = [
-  { query: "cross sunrise easter",              page: 1 }, // Páscoa de Renovação
-  { query: "sunrise golden sky morning",        page: 1 }, // Ele Ressuscitou
-  { query: "spring flowers pink white",         page: 1 }, // Recomeço de Páscoa
-  { query: "candle light peace",                page: 1 }, // Paz Que Vem da Fé
-  { query: "family table meal together",        page: 1 }, // Páscoa em Família
-  { query: "cross light church",                page: 1 }, // Amor Que Não Tem Fim
-  { query: "flowers spring bloom pink",         page: 1 }, // Primavera da Alma
-  { query: "chocolate eggs easter basket",      page: 1 }, // Chocolate e Gratidão
-  { query: "sunrise sky clouds light",          page: 1 }, // Vitória Sobre Tudo
-  { query: "flowers bouquet pink spring",       page: 1 }, // Feliz Páscoa Meu Amor
-  { query: "children nature outdoor happy",     page: 1 }, // Para os Filhos na Páscoa
-  { query: "hands prayer light",                page: 1 }, // Páscoa de Cura
-  { query: "friends outdoor smiling",           page: 1 }, // Amigo Feliz Páscoa
-  { query: "path light nature open",            page: 1 }, // A Pedra Foi Removida
-  { query: "candle flame light dark",           page: 1 }, // Páscoa de Luz
-  { query: "horizon dawn sky sunrise",          page: 1 }, // Ressurreição e Esperança
-  { query: "dove white sky flying",             page: 1 }, // Páscoa de Graça
-  { query: "family dinner table warm",          page: 1 }, // Tradição de Amor
-  { query: "mother daughter flowers garden",   page: 1 }, // Mensagem de Páscoa Para Mãe
-  { query: "butterfly flower spring colorful", page: 1 }, // Esperança Viva
+// 21 queries hardcoded — independentes do Sanity, igual ao padrão do dia-das-maes
+// Índice 0 = hero; índices 1-20 = cards na ordem de criação
+const QUERIES_PASCOA = [
+  "Easter spring flowers sunrise",     // 0 — hero
+  "Easter spring flowers sunrise",     // 1 — Páscoa de Renovação
+  "resurrection hope dawn light",      // 2 — Ele Ressuscitou
+  "spring bloom new beginning",        // 3 — Recomeço de Páscoa
+  "candle peace faith light",          // 4 — Paz Que Vem da Fé
+  "family dinner table together",      // 5 — Páscoa em Família
+  "cross golden light church",         // 6 — Amor Que Não Tem Fim
+  "pink flowers spring garden",        // 7 — Primavera da Alma
+  "chocolate eggs easter basket",      // 8 — Chocolate e Gratidão
+  "sunrise sky clouds victory",        // 9 — Vitória Sobre Tudo
+  "flowers bouquet pink romantic",     // 10 — Feliz Páscoa Meu Amor
+  "children outdoor happy playing",   // 11 — Para os Filhos na Páscoa
+  "hands prayer nature light",         // 12 — Páscoa de Cura
+  "friends smiling outdoor together", // 13 — Amigo Feliz Páscoa
+  "path nature open light",            // 14 — A Pedra Foi Removida
+  "candle flame warm glow",            // 15 — Páscoa de Luz
+  "horizon dawn sunrise sky",          // 16 — Ressurreição e Esperança
+  "dove white sky flying",             // 17 — Páscoa de Graça
+  "family warm gathering meal",        // 18 — Tradição de Amor
+  "mother flowers garden love",        // 19 — Mensagem de Páscoa Para Mãe
+  "butterfly flower spring colorful",  // 20 — Esperança Viva
 ];
 
 export interface MensagemPascoa {
@@ -69,27 +70,31 @@ export default async function PascoaPage() {
     CATEGORIAS_RELACIONADAS.includes(c.valor)
   );
 
-  // Busca mensagens de Páscoa do Sanity
-  const mensagens = await client
-    .fetch<MensagemPascoa[]>(
-      `*[_type == "mensagem" && "páscoa" in tags] | order(_createdAt asc) {
-        _id, titulo, texto, destaque
-      }`
-    )
-    .catch(() => [] as MensagemPascoa[]);
-
-  // Monta array de queries por posição (igual ao padrão do dia-das-maes)
-  const queriesComChave = mensagens.map((m, i) => ({
-    key: m._id,
-    query: QUERIES_POR_POSICAO[i]?.query ?? "spring flowers colorful",
-    page: QUERIES_POR_POSICAO[i]?.page ?? 1,
-  }));
-
-  // Busca hero + todas as fotos em paralelo — mesmo padrão do dia-das-maes
-  const [heroUrl, fotos] = await Promise.all([
-    getImage("Easter spring flowers sunrise hope"),
-    getImages(queriesComChave),
+  // Busca Sanity + Pexels em paralelo — imagens nunca dependem do Sanity
+  // Keys numéricas fixas ("1"–"20") igual ao dia-das-maes
+  const [mensagens, heroUrl, fotosNumericas] = await Promise.all([
+    client
+      .fetch<MensagemPascoa[]>(
+        `*[_type == "mensagem" && "páscoa" in tags] | order(_createdAt asc) {
+          _id, titulo, texto, destaque
+        }`
+      )
+      .catch(() => [] as MensagemPascoa[]),
+    getImage(QUERIES_PASCOA[0]),
+    getImages(
+      Array.from({ length: 20 }, (_, i) => ({
+        key: String(i + 1),
+        query: QUERIES_PASCOA[i + 1],
+        page: 1,
+      }))
+    ),
   ]);
+
+  // Mapeia fotos por _id usando a posição — igual ao dia-das-maes com fotosPorId
+  const fotos: Record<string, string> = {};
+  mensagens.forEach((m, i) => {
+    fotos[m._id] = fotosNumericas[String(i + 1)] ?? "";
+  });
 
   const heroFinal =
     heroUrl ||
