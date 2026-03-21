@@ -1,4 +1,5 @@
 // Homepage do Gotas de Amor — server component que busca dados do Sanity
+// build forçado - cache reset
 export const revalidate = 0; // temporário: força revalidação para limpar cache ISR
 import { sanityFetch } from "@/sanity/lib/live";
 import { todasMensagensQuery } from "@/lib/queries";
