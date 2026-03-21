@@ -1,65 +1,22 @@
 // Homepage do Gotas de Amor — server component que busca dados do Sanity
-// v2 - queries hardcoded ativas
-export const revalidate = 0; // temporário: força revalidação para limpar cache ISR
+export const revalidate = 86400; // ISR: revalida a cada 24h
 import { sanityFetch } from "@/sanity/lib/live";
 import { todasMensagensQuery } from "@/lib/queries";
 import type { Mensagem } from "@/components/MessageCard";
-import { getImages } from "@/lib/pexels";
 import Header from "@/components/Header";
 import CarouselDestaque from "@/components/CarouselDestaque";
 import MensagensSection from "@/components/MensagensSection";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 
-// 24 queries hardcoded — independentes do Sanity, igual ao padrão do Dia das Mães e Páscoa
-const QUERIES_HOMEPAGE = [
-  "couple love romantic sunset",
-  "sunrise morning motivation coffee",
-  "family together happy home",
-  "friends laughing outdoor joy",
-  "faith prayer hands light",
-  "mother child love embrace",
-  "birthday cake celebration candles",
-  "nature forest peaceful green",
-  "beach sunset golden sky",
-  "flowers garden spring colorful",
-  "rain window cozy reading",
-  "mountains landscape adventure sky",
-  "city lights night urban",
-  "books study learning desk",
-  "dog pet happy outdoors",
-  "cooking kitchen food warm",
-  "music headphones relax lifestyle",
-  "sport running fitness energy",
-  "travel road trip adventure",
-  "baby smile innocent joy",
-  "elderly couple love enduring",
-  "rain puddle reflection umbrella",
-  "starry night sky universe",
-  "autumn leaves fall colors",
-];
-
 export default async function HomePage() {
-  // Busca mensagens e imagens em paralelo — imagens nunca dependem do Sanity
   let mensagens: Mensagem[] = [];
-  const fotos: Record<string, string> = {};
 
-  const [resultado, fotosNumericas] = await Promise.allSettled([
-    sanityFetch({ query: todasMensagensQuery }),
-    getImages(
-      QUERIES_HOMEPAGE.map((query, i) => ({ key: String(i), query, page: 1 }))
-    ),
-  ]);
-
-  if (resultado.status === "fulfilled") {
-    mensagens = (resultado.value.data as Mensagem[]) ?? [];
-  }
-
-  if (fotosNumericas.status === "fulfilled") {
-    // Mapeia foto por posição → _id da mensagem
-    mensagens.slice(0, 24).forEach((m, i) => {
-      fotos[m._id] = fotosNumericas.value[String(i)] ?? "";
-    });
+  try {
+    const resultado = await sanityFetch({ query: todasMensagensQuery });
+    mensagens = (resultado.data as Mensagem[]) ?? [];
+  } catch {
+    mensagens = [];
   }
 
   return (
@@ -94,7 +51,7 @@ export default async function HomePage() {
         </div>
 
         {/* Filtro de categorias + grid de mensagens (client-side) */}
-        <MensagensSection mensagens={mensagens} fotos={fotos} />
+        <MensagensSection mensagens={mensagens} />
 
         {/* Seção de newsletter */}
         <Newsletter />
