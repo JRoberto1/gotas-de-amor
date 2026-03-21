@@ -66,7 +66,7 @@ const DATAS: DataComemorativa[] = [
     imagem: "https://images.unsplash.com/photo-1457301353672-324d6d14f471?w=600&q=80",
     altImagem: "Flores da primavera e ovos coloridos celebrando a Páscoa",
     corBadge: "#52B788",
-    disponivel: false,
+    disponivel: true,
   },
   {
     slug: "dia-das-maes",
