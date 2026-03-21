@@ -4,7 +4,7 @@ import { client } from "@/sanity/lib/client";
 import { todosSlugsQuery } from "@/lib/queries";
 import { CATEGORIAS } from "@/lib/categorias";
 
-const BASE_URL = "https://gotasdeamor.com.br";
+const BASE_URL = "https://www.gotasdeamor.com.br";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Páginas estáticas
@@ -13,7 +13,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/sobre`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE_URL}/contato`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
     { url: `${BASE_URL}/politica-de-privacidade`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
-    { url: `${BASE_URL}/datas/dia-das-maes`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.8 },
+    { url: `${BASE_URL}/datas/dia-das-maes`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.9 },
+    { url: `${BASE_URL}/datas/pascoa`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.9 },
   ];
 
   // Páginas de categoria
