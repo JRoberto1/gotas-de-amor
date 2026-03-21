@@ -4,9 +4,9 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Newsletter from "@/components/Newsletter";
-import PascoaContent, { type MensagemPascoa } from "./PascoaContent";
+import PascoaContent from "./PascoaContent";
 import { CATEGORIAS } from "@/lib/categorias";
-import { getImage, getFotosParaMensagens } from "@/lib/pexels";
+import { getImage, getImages } from "@/lib/pexels";
 import { client } from "@/sanity/lib/client";
 
 export const metadata: Metadata = {
@@ -32,56 +32,63 @@ export const metadata: Metadata = {
 
 const CATEGORIAS_RELACIONADAS = ["fe-espiritualidade", "familia", "amor"];
 
-// Queries simples em inglês — retornam resultados confiáveis no Pexels (page=1)
-const PEXELS_QUERIES: Record<string, string> = {
-  "Páscoa de Renovação":             "cross sunrise easter",
-  "Ele Ressuscitou":                 "sunrise golden sky morning",
-  "Recomeço de Páscoa":              "spring flowers pink white",
-  "Paz Que Vem da Fé":               "candle light peace",
-  "Páscoa em Família":               "family table meal together",
-  "Amor Que Não Tem Fim":            "cross light church",
-  "Primavera da Alma":               "flowers spring bloom pink",
-  "Chocolate e Gratidão":            "chocolate eggs easter basket",
-  "Vitória Sobre Tudo":              "sunrise sky clouds light",
-  "Feliz Páscoa Meu Amor":           "flowers bouquet pink spring",
-  "Para os Filhos na Páscoa":        "children nature outdoor happy",
-  "Páscoa de Cura":                  "hands prayer light",
-  "Amigo Feliz Páscoa":              "friends outdoor smiling",
-  "A Pedra Foi Removida":            "path light nature open",
-  "Páscoa de Luz":                   "candle flame light dark",
-  "Ressurreição e Esperança":        "horizon dawn sky sunrise",
-  "Páscoa de Graça":                 "dove white sky flying",
-  "Tradição de Amor":                "family dinner table warm",
-  "Mensagem de Páscoa Para Mãe":     "mother daughter flowers garden",
-  "Esperança Viva":                  "butterfly flower spring colorful",
-};
+// Queries Pexels fixas por posição (ordem do Sanity: _createdAt asc)
+// Igual ao padrão do dia-das-maes — sem lookup por título
+const QUERIES_POR_POSICAO = [
+  { query: "cross sunrise easter",              page: 1 }, // Páscoa de Renovação
+  { query: "sunrise golden sky morning",        page: 1 }, // Ele Ressuscitou
+  { query: "spring flowers pink white",         page: 1 }, // Recomeço de Páscoa
+  { query: "candle light peace",                page: 1 }, // Paz Que Vem da Fé
+  { query: "family table meal together",        page: 1 }, // Páscoa em Família
+  { query: "cross light church",                page: 1 }, // Amor Que Não Tem Fim
+  { query: "flowers spring bloom pink",         page: 1 }, // Primavera da Alma
+  { query: "chocolate eggs easter basket",      page: 1 }, // Chocolate e Gratidão
+  { query: "sunrise sky clouds light",          page: 1 }, // Vitória Sobre Tudo
+  { query: "flowers bouquet pink spring",       page: 1 }, // Feliz Páscoa Meu Amor
+  { query: "children nature outdoor happy",     page: 1 }, // Para os Filhos na Páscoa
+  { query: "hands prayer light",                page: 1 }, // Páscoa de Cura
+  { query: "friends outdoor smiling",           page: 1 }, // Amigo Feliz Páscoa
+  { query: "path light nature open",            page: 1 }, // A Pedra Foi Removida
+  { query: "candle flame light dark",           page: 1 }, // Páscoa de Luz
+  { query: "horizon dawn sky sunrise",          page: 1 }, // Ressurreição e Esperança
+  { query: "dove white sky flying",             page: 1 }, // Páscoa de Graça
+  { query: "family dinner table warm",          page: 1 }, // Tradição de Amor
+  { query: "mother daughter flowers garden",   page: 1 }, // Mensagem de Páscoa Para Mãe
+  { query: "butterfly flower spring colorful", page: 1 }, // Esperança Viva
+];
+
+export interface MensagemPascoa {
+  _id: string;
+  titulo: string;
+  texto: string;
+  destaque?: boolean;
+}
 
 export default async function PascoaPage() {
   const categoriasLink = CATEGORIAS.filter((c) =>
     CATEGORIAS_RELACIONADAS.includes(c.valor)
   );
 
-  // Busca mensagens de Páscoa do Sanity (tag "páscoa")
+  // Busca mensagens de Páscoa do Sanity
   const mensagens = await client
     .fetch<MensagemPascoa[]>(
       `*[_type == "mensagem" && "páscoa" in tags] | order(_createdAt asc) {
-        _id, titulo, texto, destaque, slug, pexelsQuery
+        _id, titulo, texto, destaque
       }`
     )
     .catch(() => [] as MensagemPascoa[]);
 
-  // Busca imagens em paralelo: hero + cards
+  // Monta array de queries por posição (igual ao padrão do dia-das-maes)
+  const queriesComChave = mensagens.map((m, i) => ({
+    key: m._id,
+    query: QUERIES_POR_POSICAO[i]?.query ?? "spring flowers colorful",
+    page: QUERIES_POR_POSICAO[i]?.page ?? 1,
+  }));
+
+  // Busca hero + todas as fotos em paralelo — mesmo padrão do dia-das-maes
   const [heroUrl, fotos] = await Promise.all([
     getImage("Easter spring flowers sunrise hope"),
-    getFotosParaMensagens(
-      mensagens.map((m) => ({
-        _id: m._id,
-        titulo: m.titulo,
-        categoria: "páscoa",
-        // query curada > campo Sanity > título (fallback final em getFotosParaMensagens)
-        pexelsQuery: PEXELS_QUERIES[m.titulo] ?? m.pexelsQuery ?? undefined,
-      }))
-    ),
+    getImages(queriesComChave),
   ]);
 
   const heroFinal =
@@ -110,7 +117,6 @@ export default async function PascoaPage() {
             }}
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-            {/* Badge */}
             <span
               className="inline-block text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4 text-white"
               style={{
@@ -121,14 +127,12 @@ export default async function PascoaPage() {
             >
               Abril 2026
             </span>
-
             <h1
               className="text-3xl sm:text-5xl font-bold text-white leading-tight max-w-2xl drop-shadow-md"
               style={{ fontFamily: "var(--font-playfair-display), Georgia, serif" }}
             >
               Mensagens de Páscoa
             </h1>
-
             <p
               className="text-white/90 mt-4 max-w-lg text-base sm:text-lg drop-shadow"
               style={{ fontFamily: "var(--font-lato), Arial, sans-serif" }}
