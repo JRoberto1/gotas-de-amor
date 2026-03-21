@@ -95,17 +95,28 @@ export async function getFotosParaMensagens(
 }
 
 /**
- * Busca múltiplas imagens em paralelo.
+ * Busca múltiplas imagens em lotes de 3 com 350ms entre lotes.
+ * Evita HTTP 429 (rate limit por segundo da Pexels).
  * Retorna um Record<key, url> — url é string vazia se a busca falhar.
  */
 export async function getImages(
   queries: Array<{ key: string; query: string; page?: number }>
 ): Promise<Record<string, string>> {
-  const results = await Promise.all(
-    queries.map(async ({ key, query, page }) => ({
-      key,
-      url: await getImage(query, { page }),
-    }))
-  );
+  const CHUNK = 2;
+  const DELAY = 500; // ms entre lotes
+  const results: Array<{ key: string; url: string }> = [];
+
+  for (let i = 0; i < queries.length; i += CHUNK) {
+    if (i > 0) await new Promise((r) => setTimeout(r, DELAY));
+    const lote = queries.slice(i, i + CHUNK);
+    const loteResults = await Promise.all(
+      lote.map(async ({ key, query, page }) => ({
+        key,
+        url: await getImage(query, { page }),
+      }))
+    );
+    results.push(...loteResults);
+  }
+
   return Object.fromEntries(results.map(({ key, url }) => [key, url]));
 }
