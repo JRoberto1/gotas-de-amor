@@ -3,27 +3,62 @@ export const revalidate = 0; // temporário: força revalidação para limpar ca
 import { sanityFetch } from "@/sanity/lib/live";
 import { todasMensagensQuery } from "@/lib/queries";
 import type { Mensagem } from "@/components/MessageCard";
-import { getFotosParaMensagens } from "@/lib/pexels";
+import { getImages } from "@/lib/pexels";
 import Header from "@/components/Header";
 import CarouselDestaque from "@/components/CarouselDestaque";
 import MensagensSection from "@/components/MensagensSection";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 
+// 24 queries hardcoded — independentes do Sanity, igual ao padrão do Dia das Mães e Páscoa
+const QUERIES_HOMEPAGE = [
+  "couple love romantic sunset",
+  "sunrise morning motivation coffee",
+  "family together happy home",
+  "friends laughing outdoor joy",
+  "faith prayer hands light",
+  "mother child love embrace",
+  "birthday cake celebration candles",
+  "nature forest peaceful green",
+  "beach sunset golden sky",
+  "flowers garden spring colorful",
+  "rain window cozy reading",
+  "mountains landscape adventure sky",
+  "city lights night urban",
+  "books study learning desk",
+  "dog pet happy outdoors",
+  "cooking kitchen food warm",
+  "music headphones relax lifestyle",
+  "sport running fitness energy",
+  "travel road trip adventure",
+  "baby smile innocent joy",
+  "elderly couple love enduring",
+  "rain puddle reflection umbrella",
+  "starry night sky universe",
+  "autumn leaves fall colors",
+];
+
 export default async function HomePage() {
-  // Busca todas as mensagens do Sanity com suporte a live preview
+  // Busca mensagens e imagens em paralelo — imagens nunca dependem do Sanity
   let mensagens: Mensagem[] = [];
   let fotos: Record<string, string> = {};
 
-  try {
-    const resultado = await sanityFetch({ query: todasMensagensQuery });
-    mensagens = (resultado.data as Mensagem[]) ?? [];
-    // Limita a 24 imagens para evitar rate limit do Pexels (200 msgs × 600ms = 60s)
-    // Mensagens além das 24 primeiras usam fallback de gradiente no card
-    fotos = await getFotosParaMensagens(mensagens.slice(0, 24));
-  } catch {
-    // Se o Sanity não estiver configurado, MensagensSection usa fallback automaticamente
-    mensagens = [];
+  const [resultado, fotosNumericas] = await Promise.allSettled([
+    sanityFetch({ query: todasMensagensQuery }),
+    getImages(
+      QUERIES_HOMEPAGE.map((query, i) => ({ key: String(i), query, page: 1 }))
+    ),
+  ]);
+
+  if (resultado.status === "fulfilled") {
+    mensagens = (resultado.value.data as Mensagem[]) ?? [];
+  }
+
+  if (fotosNumericas.status === "fulfilled") {
+    // Mapeia foto por posição → _id da mensagem
+    mensagens.slice(0, 24).forEach((m, i) => {
+      fotos[m._id] = fotosNumericas.value[String(i)] ?? "";
+    });
   }
 
   return (
