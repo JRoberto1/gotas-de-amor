@@ -58,20 +58,16 @@ export function pageFromId(id: string): number {
 }
 
 /**
- * Busca imagem usando o título como query principal.
- * Se não encontrar resultado, faz fallback para a categoria.
+ * Busca imagem usando a query principal.
+ * Fallback: título isolado se a query falhar, sem usar categoria
+ * (categoria causava imagens repetidas para mensagens da mesma categoria).
  */
 export async function getImageParaMensagem(
-  titulo: string,
-  categoria: string,
+  query: string,
+  _categoria: string,
   page: number
 ): Promise<string> {
-  const url = await getImage(titulo, { page });
-  if (url) return url;
-
-  // Fallback: categoria (slug → palavras)
-  const queryFallback = categoria.replace(/-/g, " ");
-  return getImage(queryFallback, { page });
+  return getImage(query, { page });
 }
 
 /**
